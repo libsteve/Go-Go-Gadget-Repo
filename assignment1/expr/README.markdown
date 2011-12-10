@@ -19,25 +19,31 @@ We have provided a Makefile for you to use.
 
 To compile the program in the command line, either of 
 the following will work:
+
 	$ make
 	$ make all
 
 To run in command line:
+	
 	$ ./expr (expression)
 
 To generate documentation:
+	
 	$ make doc
 
 To run the tests in the command line:
+
 	$ make test
 	
 	Note: For each test, it is in the form 
+	
 	./expr 1 + 2
 	3
 	expr 1 + 2
 	3 
 
 To remove the executable:
+	
 	$ make clean
 
 Example use:
