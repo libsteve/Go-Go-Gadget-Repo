@@ -1,18 +1,11 @@
-#Go Go Gadget 
+#Homework 2: Preprocessor
 
 by Kristen Mills and Steve Brunwasser
 
+##Includes:
+	well nothing yet
+
 ##About
-
-These are some the assignments we are doing for one of our classes, Systems and Concurrent Programming in Go
-
-##Includes
-
-####Assignment 1: Arithmetic
-	
-An implementation of the unix command expr restricted to integer division
-
-####Assignment 2: Preprocessor
 
 A line oriented preprocessor which can read input files and 
 
@@ -28,3 +21,6 @@ Handles the following customary commands lines
 * use a new namespace for each argument
 
 Reports all errors
+
+##Usage
+	nope doesn't do anything yet

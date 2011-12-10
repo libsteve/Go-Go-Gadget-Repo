@@ -35,7 +35,7 @@ To run the tests in the command line:
 
 	$ make test
 	
-	Note: For each test, it is in the form 
+Note: For each test, it is in the form 
 	
 	./expr 1 + 2
 	3
