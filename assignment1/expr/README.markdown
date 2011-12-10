@@ -1,25 +1,19 @@
-===========================
-Homework 1: Arithmetic
-===========================
+#Homework 1: Arithmetic 
 
 by Kristen Mills and Steve Brunwasser
 
-Includes:
+##Includes:
 	expr.go
  	expreval.go
 	Makefile
 
-==========================
-About
-==========================
+##About
 
 Functions the same way as the unix command expr but 
 is restricted to integer
 arithmetic.
 
-==========================
-Usage
-==========================
+##Usage
 
 We have provided a Makefile for you to use.
 
