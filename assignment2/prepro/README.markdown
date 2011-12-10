@@ -11,7 +11,7 @@ A line oriented preprocessor which can read input files and
 
 * include flies
 * (un-)define names
-* conditionally ex- or include text if a name is (un-)ddefined
+* conditionally ex- or include text if a name is (un-)defined
 
 Handles the following customary commands lines
 

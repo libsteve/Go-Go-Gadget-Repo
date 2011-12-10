@@ -4,7 +4,10 @@ by Kristen Mills and Steve Brunwasser
 
 ##About
 
-These are some the assignments we are doing for one of our classes, Systems and Concurrent Programming in Go
+These are some the assignments we are doing for one of our classes, Systems and Concurrent Programming in Go.
+
+Links
+[Go Website](http://golang.org/)
 
 ##Includes
 
@@ -18,7 +21,7 @@ A line oriented preprocessor which can read input files and
 
 * include flies
 * (un-)define names
-* conditionally ex- or include text if a name is (un-)ddefined
+* conditionally ex- or include text if a name is (un-)defined
 
 Handles the following customary commands lines
 
@@ -27,4 +30,4 @@ Handles the following customary commands lines
 * treat any other argument as a file name to be processed
 * use a new namespace for each argument
 
-Reports all errors
+Reports all errors.
