@@ -4,3 +4,5 @@ Information on bufio:
 	http://golang.org/pkg/bufio
 Information on flags:
 	http://golang.org/pkg/flag/
+Information on notation:
+	http://golang.org/doc/go_spec.html#Notation
