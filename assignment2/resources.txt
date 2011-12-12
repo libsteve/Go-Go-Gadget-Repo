@@ -1,2 +1,6 @@
 Information on slices:
 	http://golang.org/doc/go_spec.html#Slices
+Information on bufio:
+	http://golang.org/pkg/bufio
+Information on flags:
+	http://golang.org/pkg/flag/
