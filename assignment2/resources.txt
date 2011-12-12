@@ -1,0 +1,2 @@
+Information on slices:
+	http://golang.org/doc/go_spec.html#Slices
