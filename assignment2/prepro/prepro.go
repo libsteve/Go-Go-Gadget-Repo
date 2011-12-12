@@ -24,13 +24,14 @@ include (
 func getCommands() map [string]func(/*place datastructure type here*/) {
 	return {
 		"define"	: func(/*place datastructure type here*/) {}
-		"if"		: ''
-		"ifdef"		: ''
-		"ifndef"	: ''
-		"else"		: ''
-		"endif"		: ''
-		"include"	: ''
-		"#"			: ''
+		"undef"		: func(/**/) {}
+		"if"		: func(/**/) {}
+		"ifdef"		: func(/**/) {}
+		"ifndef"	: func(/**/) {}
+		"else"		: func(/**/) {}
+		"endif"		: func(/**/) {}
+		"include"	: func(/**/) {}
+		"#"			: func(/**/) {}
 	}
 }
 

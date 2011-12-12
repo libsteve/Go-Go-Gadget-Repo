@@ -6,5 +6,7 @@ Information on flags:
 	http://golang.org/pkg/flag/
 Information on notation:
 	http://golang.org/doc/go_spec.html#Notation
-Information on Interfaces
+Information on interfaces:
 	http://golang.org/doc/effective_go.html#interfaces_and_types
+Information on indexes with maps:
+	http://golang.org/doc/go_spec.html#Indexes
