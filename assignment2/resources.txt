@@ -10,3 +10,5 @@ Information on interfaces:
 	http://golang.org/doc/effective_go.html#interfaces_and_types
 Information on indexes with maps:
 	http://golang.org/doc/go_spec.html#Indexes
+Information on type assertions:
+	http://golang.org/doc/go_spec.html#Type_assertions
