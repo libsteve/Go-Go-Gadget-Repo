@@ -20,3 +20,5 @@ Webserver help:
 	http://golangtutorials.blogspot.com/2011/11/using-external-api-in-go-web-program.html
 Writing to a file:
 	http://golang.org/pkg/io/ioutil/#WriteFile
+Looking up a contains method:
+	http://golang.org/pkg/strings/

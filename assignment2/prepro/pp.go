@@ -1,3 +1,13 @@
+/*
+ * A simple preprocessor that takes in input files and can
+ * 
+ * 	include files,
+ * 	(un-)define names,
+ *	 and conditionally ex- or include text if a name is (un-)defined.
+ * 
+ * Command line Usage:
+ *		./pp [-flags] [args]
+ */
 package main
 
 import (
@@ -7,8 +17,17 @@ import (
 	"flag"
 	"bufio"
 	"http"
-//	"./prepro"
+	"strings"
+	"./prepro"
 )
+
+/*
+ * The handler for the web server form
+ * 
+ * Parameters:
+ *		w  -  a http response writer
+ *		r  -  a http request header
+ */
 func handler(w http.ResponseWriter, r *http.Request) {
       file, _:= os.Open("index.html")
 	  in:= bufio.NewReader(file)
@@ -21,17 +40,38 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 	  }
 }
-
+/*
+ * The handler for the output after you preprocess the input
+ * 
+ * Parameters:
+ *		w  -  a http response writer
+ *		r  -  a http request header
+ */
 func handlerInput(w http.ResponseWriter, r *http.Request){
-	//input := r.FormValue("input")
-	/*take the input and stick it in your thing*/
+	input := r.FormValue("input")
+	if strings.Contains(input, "include"){
+		fmt.Fprint(w, "Cannot include files on the web server")
+	}else{
+		/*take the input and stick it in your thing*/
+		fmt.Fprint(w, "doing it right")
+	}
 }
 
+/*
+ * Run the program
+ *
+ * Usage:
+ * 		./pp -       					: read from standard in
+ *		./pp - file1.txt file2.txt ...  : read from standard in as well as files
+ *		./pp -h							: launch the webserver
+ *		./pp file1.txt file2.txt ...	: read from files
+ *		./pp 							: read from standard in 
+ */
 func main() {
-	var ws *bool
-	ws = flag.Bool("ws",false, "run as a webserver")
+	var h *bool
+	h = flag.Bool("h",false, "run as a webserver")
 	flag.Parse()
-	if *ws {
+	if *h {
 		http.HandleFunc("/", handler)
 		http.HandleFunc("/pp", handlerInput)
 		http.ListenAndServe(":6060", nil)
@@ -50,7 +90,7 @@ func main() {
 				b = append(b,'\n')
 			}
 		}
-		file:= os.Open("temp.txt")
+		file, _:= os.Open("temp.txt")
 		in := bufio.NewReader(file)
 		/* read from file in */
 		file.Close()
