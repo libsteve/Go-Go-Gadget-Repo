@@ -6,20 +6,12 @@
  */
 package prepro
 
-include (
+import (
 	"os"
-	"fmt"
-	"buffio"
-	"string"
+//	"fmt"
+	"bufio"
+	"strings"
 )
-
-////////////////////////
-////////////////////////
-///
-/// WARNING!:	I have no real idea what I am doing...
-///
-////////////////////////
-////////////////////////
 
 /**
  * Start reading a file and processing its contents
@@ -27,33 +19,66 @@ include (
  * Parameters:
  *		reader	-	the reader to read the file with
  */
-func Runloop( reader *Reader ) {
-	runloop( reader, var storedData map [string]string )
+func ReadInput( reader *Reader ) {
+	readloop( reader, make(map [string]string), make(map [string]int))
 }
 
 /**
- * Read the given file and process its contents
+ * Read the given file and process its contents until a termination keyword is reached
  *
  * Parameters:
  *		reader		-	the reader to read the current file with
  *		storedData	-	the data stored from previous files
  *						i.e. the defined variables
+ *		termination -	a map that holds values that cause termination
  */
-func runloop( reader *Reader, storedData map [string]string ) {
+func readloop( reader *Reader, storedData map [string]string, termination map [string]int ) {
 	commands := gencommands( reader, storedData )
 
-	for /*the amount of lines in the file*/ {
-		line, iscommand := getline(reader.Readline())
+	lineString, ok := reader.ReadString(('\n').(byte));
+	for ok {
+		line, iscommand := getline(reader.ReadString(('\n').(byte)))
 		if iscommand {
 			if command, ok := getcommand( line ); ok {
+				if _, terminate := termination[command]; terminate {
+					return
+				}
 				if function, ok := commands[command]; ok {
 					function( remove_hashtag(line) )
+					// then print to stdout
 				}
 			}
 		} else {
-			// scan for defined variables
-			// replace defined variables
+			insertdefined( line, storedData )
+			// then print to stderr
 		}
+		lineString, ok = reader.ReadString(('\n').(byte));
+	}
+}
+
+/**
+ * Read the given file and until a termination keyword is reached
+ *
+ * Parameters:
+ *		reader		-	the reader to read the current file with
+ *		storedData	-	the data stored from previous files
+ *						i.e. the defined variables
+ *		termination -	a map that holds values that cause termination
+ */
+func skiploop( reader *Reader, storedData map [string]string, termination map [string]int ) {
+	commands := gencommands( reader, storedData )
+
+	lineString, ok := reader.ReadString(('\n').(byte));
+	for ok {
+		line, iscommand := getline(lineString)
+		if iscommand {
+			if command, ok := getcommand( line ); ok {
+				if _, terminate := termination[command]; terminate {
+					return
+				}
+			}
+		}
+		lineString, ok = reader.ReadString(('\n').(byte));
 	}
 }
 
@@ -62,39 +87,80 @@ func runloop( reader *Reader, storedData map [string]string ) {
 
 
 
-/**
- ******************************
- ******************************
- ** THIS IS HORRIBLE, MUST FIX
- ******************************
- ******************************
- */
+
+
+
 func gencommands( reader *Reader, storedData map [string]string ) map [string]func( args []string ) {
-	var commands map [string]func()
+	commands := make( map [string]func() )
 
 	// add the commands to the map
-	commands["#"]		= func ( args []string ) {}
-	commands["include"] = func ( args []string ) {}
-	commands["define"]	= func ( args []string ) {
-		
-	}
-	commands["undef"]	= func ( args []string ) {}
+	commands["#"]		=
+		func ( args []string ) {
+			os.Stderr("This is technically not a command")
+		}, true;
 
-	////////////////
-	// if statements
-	commands["if"]		= func ( args []string ) {
-		ifStatement( args[string], reader, storedData )
-	}
-	commands["ifdef"]	= func ( args []string ) {
-		ifStatement( args[string], reader, storedData )
-	}
-	commands["ifndef"]	= func ( args []string ) {
-		ifStatement( args[string], reader, storedData )
-	}
-	////////////////
+	commands["include"] =
+		func ( args []string ) {
+			if len(args[1]) > 2 {
+				rangemax := len(args[1]) - 1
+				filename := args[1]
+				filename = filename[1:rangemax]
+				if reader, ok := bufio.NewReader( os.Create( filename ) ); ok {
+					readloop(newreader, storedData, make(map [string]int))
+				} else {
+					os.Stderr("Invalid File")
+				}
+			} else {
+				os.Stderr("No File Specified")
+			}
+		}, true;
 
-	commands["elseif"]	= func ( args []string ) {}
-	commands["else"]	= func ( args []string ) {}
+	commands["define"]	=
+		func ( args []string ) {
+			var result string
+			defined, _ := args[1]
+			for index, word := range args {
+				if index > 1 {
+					result += word
+				}
+			}
+			storedData[defined] = result
+		}, true;
+
+	commands["undef"]	=
+		func ( args []string ) {
+			if command, ok := storedData[arg[1]]; ok {
+				storedData[command] = _, false
+			} else {
+				os.Stderr("Variable not defined")
+			}
+		}, true;
+
+	commands["if"]		=
+		func ( args []string ) {
+			os.Stderr("Warning: This command does nothing now...")
+			ifStatement( args[string], reader, storedData )
+		}, true;
+
+	commands["ifdef"]	=
+		func ( args []string ) {
+			ifStatement( args[string], reader, storedData )
+		}, true;
+
+	commands["ifndef"]	=
+		func ( args []string ) {
+			ifStatement( args[string], reader, storedData )
+		}, true;
+
+	commands["elseif"]	=
+		func ( args []string ) {
+			os.Stderr("Warning: This command does nothing now...")
+		}, true;
+
+	commands["else"]	=
+		func ( args []string ) {
+			os.Stderr("Warning: This shouldn't do things by itself...")
+		}, true;
 
 	return commands
 }
@@ -113,11 +179,11 @@ func gencommands( reader *Reader, storedData map [string]string ) map [string]fu
  * return a tupole of an array of strings and a bool
  * the bool is true if the line is a command, false otherwise
  */
-func getline( line_bitstring []byte ) ([]string, bool) {
-	line := string.Split( " ", line_bitstring.(string))
+func getline( line_string string ) ([]string, bool) {
+	line := strings.Split( " ", line_string )
 	
 	iscommand := false
-	if command, _ := line[0]; if command == "#" {
+	if command, _ := line[0]; command == "#" {
 		iscommand = true
 	} else if command[0] == "#" {
 		iscommand = true
@@ -138,7 +204,7 @@ func getline( line_bitstring []byte ) ([]string, bool) {
  */
 func getcommand( line []string ) (string, bool) {
 
-	if command, ok := line[0]; if command == "#" {
+	if command, ok := line[0]; command == "#" {
 		command, ok = line[1]
 	} else if command[0] == "#" {
 		command = command[1:len(command)]
@@ -161,7 +227,7 @@ func getcommand( line []string ) (string, bool) {
  */
 func remove_hashtag( line []string ) ([]string, bool) {
 
-	if command, ok := line[0]; if command == "#" {
+	if command, ok := line[0]; command == "#" {
 		line = line[1:len(line)]
 	} else if command[0] == "#" {
 		line[0] = command[1:len(command)]
@@ -174,17 +240,28 @@ func remove_hashtag( line []string ) ([]string, bool) {
 	return command, ok
 }
 
-
-
 /**
- ******************************
- ******************************
- ** THIS IS HORRIBLE, MUST FIX
- ******************************
- ******************************
+ * insert defined words where they are needed
+ *
+ * takes a line that is already split
+ * returns an array of strings and a bool
+ * the array of strings is the resulting line with the definitions
+ * the bool is true if there was a success, false otherwise
  */
+func instertdefined(line []string, storedData map [string]string) ([]string, bool) {
+	for index, word := range line {
+		if result, ok := storedData[word]; ok {
+			line[index] = result
+		} else {
+			return nil, false
+		}
+	}
+	return line, true
+}
+
 // please make sure that line[0] is the command name without the '#'
 func ifStatement( args []string, reader *Reader, storedData map [string]string ) {
+
 	conditional := true
 	if_type := args[0]
 	switch if_type{
@@ -207,4 +284,13 @@ func ifStatement( args []string, reader *Reader, storedData map [string]string )
 		os.Stderr("How does this sort of thing happen?")
 	}
 	
+	terminalmap := map [string]int	{	"else"  : 0, "endif" : 0	}
+	if conditional {
+		// continue on loop until else, then skip to the endif
+		readloop( reader, storedData, terminalmap )
+		skiploop( reader, storedData, terminalmap )
+	} else {
+		// skip to the else or endif
+		skiploop( reader, storedData, terminalmap )
+	}
 }
