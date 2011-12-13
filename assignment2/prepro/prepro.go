@@ -8,9 +8,9 @@ package prepro
 
 import (
 	"os"
-	"fmt"
-	"buffio"
-	"string"
+//	"fmt"
+	"bufio"
+	"strings"
 )
 
 /**
@@ -20,7 +20,7 @@ import (
  *		reader	-	the reader to read the file with
  */
 func ReadInput( reader *Reader ) {
-	readloop( reader, storedData, make(map [string]string))
+	readloop( reader, make(map [string]string), make(map [string]int))
 }
 
 /**
@@ -105,7 +105,7 @@ func gencommands( reader *Reader, storedData map [string]string ) map [string]fu
 				rangemax := len(args[1]) - 1
 				filename := args[1]
 				filename = filename[1:rangemax]
-				if reader, ok := buffio.NewReader( os.Create( filename ) ); ok {
+				if reader, ok := bufio.NewReader( os.Create( filename ) ); ok {
 					readloop(newreader, storedData, make(map [string]int))
 				} else {
 					os.Stderr("Invalid File")
@@ -180,10 +180,10 @@ func gencommands( reader *Reader, storedData map [string]string ) map [string]fu
  * the bool is true if the line is a command, false otherwise
  */
 func getline( line_string string ) ([]string, bool) {
-	line := string.Split( " ", line_string )
+	line := strings.Split( " ", line_string )
 	
 	iscommand := false
-	if command, _ := line[0]; if command == "#" {
+	if command, _ := line[0]; command == "#" {
 		iscommand = true
 	} else if command[0] == "#" {
 		iscommand = true
@@ -204,7 +204,7 @@ func getline( line_string string ) ([]string, bool) {
  */
 func getcommand( line []string ) (string, bool) {
 
-	if command, ok := line[0]; if command == "#" {
+	if command, ok := line[0]; command == "#" {
 		command, ok = line[1]
 	} else if command[0] == "#" {
 		command = command[1:len(command)]
@@ -227,7 +227,7 @@ func getcommand( line []string ) (string, bool) {
  */
 func remove_hashtag( line []string ) ([]string, bool) {
 
-	if command, ok := line[0]; if command == "#" {
+	if command, ok := line[0]; command == "#" {
 		line = line[1:len(line)]
 	} else if command[0] == "#" {
 		line[0] = command[1:len(command)]
@@ -284,13 +284,13 @@ func ifStatement( args []string, reader *Reader, storedData map [string]string )
 		os.Stderr("How does this sort of thing happen?")
 	}
 	
-
+	terminalmap := map [string]int	{	"else"  : 0, "endif" : 0	}
 	if conditional {
 		// continue on loop until else, then skip to the endif
-		readloop( reader, storedData, { "else":0; "endif":0; } )
-		skiploop( reader, storedData, { "else":0; "endif":0; } )
+		readloop( reader, storedData, terminalmap )
+		skiploop( reader, storedData, terminalmap )
 	} else {
 		// skip to the else or endif
-		skiploop( reader, storedData, { "else":0; "endif":0; } )
+		skiploop( reader, storedData, terminalmap )
 	}
 }
