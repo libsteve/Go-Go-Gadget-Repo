@@ -16,3 +16,7 @@ Using files:
 	http://golang.org/pkg/os/
 Information on the http package
 	http://golang.org/pkg/http/
+Webserver help:
+	http://golangtutorials.blogspot.com/2011/11/using-external-api-in-go-web-program.html
+Writing to a file:
+	http://golang.org/pkg/io/ioutil/#WriteFile
