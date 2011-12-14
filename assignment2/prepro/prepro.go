@@ -36,16 +36,17 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 	commands := gencommands( reader, storedData )
 	lineString, err := reader.ReadString('\n')
 	for err == nil {
-		l, _ := reader.ReadString('\n')
-		line, isCommand := getline(l)
+		lineString, _ = reader.ReadString('\n')
+		line, isCommand := getline(lineString)
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
 				if _, terminate := termination[command]; terminate {
 					return
 				}
-				/* TODO no clue what this could possibly mean*/
+
 				if function, ok := commands[command]; ok {
-					function( remove_hashtag(line) )
+					ln, _ := remove_hashtag(line)
+					function( ln )
 					// then print to stdout
 				}
 			}
@@ -67,7 +68,7 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
  *		termination -	a map that holds values that cause termination
  */
 func skiploop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
-	commands := gencommands( reader, storedData )
+	_ = gencommands( reader, storedData )
 
 	lineString, err := reader.ReadString('\n');
 	for err == nil {
@@ -124,8 +125,10 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 	commands["undef"]	=
 		func ( args []string ) {
 			if command, ok := storedData[args[1]]; ok {
-				/*TODO WHAT!?!??!?!*/
-				storedData[command] = _, false
+				/*TODO  check to make sure this still works. 
+				 		you can't assign it to _ so i changed
+						it to empty string     */
+				storedData[command] = "", false
 			} else {
 				fmt.Fprint(os.Stderr, "Variable not defined")
 			}
@@ -134,20 +137,17 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 	commands["if"]		=
 		func ( args []string ) {
 			fmt.Fprint(os.Stderr, "Warning: This command does nothing now...")
-			/*TODO WHAT!?!??!*/
-			ifStatement( args[string], reader, storedData )
+			ifStatement( args, reader, storedData )
 		}, true;
 
 	commands["ifdef"]	=
 		func ( args []string ) {
-			/*TODO WHAT!?!??!*/
-			ifStatement( args[string], reader, storedData )
+			ifStatement( args, reader, storedData )
 		}, true;
 
 	commands["ifndef"]	=
 		func ( args []string ) {
-			/*TODO WHAT!?!??!*/
-			ifStatement( args[string], reader, storedData )
+			ifStatement( args, reader, storedData )
 		}, true;
 
 	commands["elseif"]	=
@@ -176,10 +176,10 @@ func getline( line_string string ) ([]string, bool) {
 	iscommand := false
 	if command := line[0]; command == "#" {
 		iscommand = true
-	} else if command[0] == "#" {
+	} else if command[0] == '#' {
 		iscommand = true
 	} else {
-		// iscommand = false
+		 iscommand = false
 	}
 
 	return line, iscommand
@@ -194,15 +194,16 @@ func getline( line_string string ) ([]string, bool) {
  * the bool is true if the line contains a command. false otherwise
  */
 func getcommand( line []string ) (string, bool) {
-
+	var command string
+	var ok bool
 	if command := line[0]; command == "#" {
 		command = line[1]
-	} else if command[0] == "#" {
+	} else if command[0] == '#' {
 		command = command[1:len(command)]
 	} else {
-		os.Stderr("No Command On Line")
+		fmt.Fprint(os.Stderr, "No Command On Line")
 		ok = false
-		comand = nil
+		command = ""
 	}
 
 	return command, ok
@@ -216,16 +217,17 @@ func getcommand( line []string ) (string, bool) {
  * the array of string is the line without the hashtag, nil if error
  * the bool is true if succes, false otherwise
  */
-func remove_hashtag( line []string ) ([]string, bool) {
-
-	if command, ok := line[0]; command == "#" {
+ func remove_hashtag( line []string ) ([]string, bool) {
+	var command []string
+	var ok bool
+	if command := line[0]; command == "#" {
 		line = line[1:len(line)]
-	} else if command[0] == "#" {
+	} else if command[0] == '#' {
 		line[0] = command[1:len(command)]
 	} else {
-		os.Stderr("No Hashtag On Line")
+		fmt.Fprint(os.Stderr, "No Hashtag On Line")
 		ok = false
-		comand = nil
+		command = ""
 	}
 
 	return command, ok
@@ -252,18 +254,17 @@ func insertdefined(line []string, storedData map [string]string) ([]string, bool
 
 // please make sure that line[0] is the command name without the '#'
 func ifStatement( args []string, reader *bufio.Reader, storedData map [string]string ) {
-
 	conditional := true
 	if_type := args[0]
 	switch if_type{
 	case "ifdef":
-		if _, ok := storedData[condition]; ok {
+		if _, ok := storedData[if_type]; ok {
 			conditional = true
 		} else {
 			conditional = false
 		}
 	case "ifndef":
-		if _, ok := storedData[condition]; !ok {
+		if _, ok := storedData[if_type]; !ok {
 			conditional = true
 		} else {
 			conditional = false

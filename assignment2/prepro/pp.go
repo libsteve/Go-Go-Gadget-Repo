@@ -52,7 +52,7 @@ func handlerInput(w http.ResponseWriter, r *http.Request){
 	if strings.Contains(input, "#include") || strings.Contains(input, "# include") {
 		fmt.Fprint(w, "Cannot include files on the web server")
 	}else{
-		ioutil.WriteFile("temp.txt", input, 0600)
+		ioutil.WriteFile("temp.txt", []uint8(input), 0600)
 		file, _:= os.Open("temp.txt")
 		in := bufio.NewReader(file)
 		prepro.ReadInput(in)
