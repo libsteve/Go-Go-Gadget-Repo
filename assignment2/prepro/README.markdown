@@ -71,7 +71,7 @@ period by itself on a line marks EOF
 
 ##Known Bugs
 
-* The webserver will launch but the program itself will work properly
+* The webserver prints to standard out.
 * Doesn't understand nested conditionals.
 * Including files always prints out Invalid File.
 
