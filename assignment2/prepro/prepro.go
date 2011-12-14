@@ -36,10 +36,9 @@ func ReadInput( reader *bufio.Reader ) {
  */
 func readloop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
 	commands := gencommands( reader, storedData )
-	lineString, err := reader.ReadString('\n')
+	lineString, err := reader.ReadString('\n');
 	for err == nil {
 		//testing
-		fmt.Println("looping")
 		line, isCommand := getline(lineString)
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
@@ -60,7 +59,6 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 			}
 		} else {
 			//testing
-			fmt.Println("printing line")
 			resultline, _ := insertdefined( line, storedData )
 			// then print to stdout
 			result := ""
@@ -138,7 +136,7 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 					result += word
 				}
 			}
-			storedData[defined] = result
+			storedData[defined] = result, true
 		}, true;
 
 	commands["undef"]	=
@@ -188,8 +186,10 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
  * the bool is true if the line is a command, false otherwise
  */
 func getline( line_string string ) ([]string, bool) {
-	line := strings.Split( " ", line_string )
+	line_string = strings.TrimSpace(line_string)
+	line := strings.Split(line_string, " " )
 	iscommand := false
+	if line_string != ""{
 	if command := line[0]; command == "#" {
 		iscommand = true
 	} else if command[0] == '#' {
@@ -197,7 +197,7 @@ func getline( line_string string ) ([]string, bool) {
 	} else {
 		 iscommand = false
 	}
-
+	}
 	return line, iscommand
 }
 

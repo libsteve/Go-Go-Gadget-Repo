@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"http"
 	"strings"
+	"regexp"
 	"./prepro"
 )
 
@@ -102,7 +103,7 @@ func main() {
 	}
 	if !*h {
 		for _, arg := range os.Args {
-			if arg != "-"{
+			if match, _ := regexp.MatchString("(.*).txt", arg) ; match{
 				file,_ := os.Open(arg)
 				in := bufio.NewReader(file)
 				prepro.ReadInput(in)
