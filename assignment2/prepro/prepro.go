@@ -43,26 +43,27 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
 				//testing
-				fmt.Println("line is command")
+			//	fmt.Println("line is command")
 				if _, terminate := termination[command]; terminate {
 					//testing
-					fmt.Println("termination")
+				//	fmt.Println("termination")
 					return
 				}
-
 				if function, ok := commands[command]; ok {
 					ln, _ := remove_hashtag(line)
+				//	fmt.Println(ln)
 					function( ln )
 					//testing
-					fmt.Println("command executed")
+				//	fmt.Println("command executed")
 				}
 			}
 		} else {
 			//testing
-			resultline, _ := insertdefined( line, storedData )
+			//resultline := insertdefined( line, storedData )
+		//	fmt.Println(line)
 			// then print to stdout
 			result := ""
-			for index, word := range resultline {
+			for index, word := range line {
 				if index != 0 {
 					result += " " + word
 				} else {
@@ -211,8 +212,8 @@ func getline( line_string string ) ([]string, bool) {
  */
 func getcommand( line []string ) (string, bool) {
 	var command string
-	var ok bool
-	if command := line[0]; command == "#" {
+	ok := true
+	if command = line[0]; command == "#" {
 		command = line[1]
 	} else if command[0] == '#' {
 		command = command[1:len(command)]
@@ -234,7 +235,7 @@ func getcommand( line []string ) (string, bool) {
  * the bool is true if succes, false otherwise
  */
  func remove_hashtag( line []string ) ([]string, bool) {
-	var command []string
+	//var command []string
 	var ok bool
 	if command := line[0]; command == "#" {
 		line = line[1:len(line)]
@@ -246,7 +247,7 @@ func getcommand( line []string ) (string, bool) {
 		command = ""
 	}
 
-	return command, ok
+	return line, ok
 }
 
 /**
@@ -257,15 +258,15 @@ func getcommand( line []string ) (string, bool) {
  * the array of strings is the resulting line with the definitions
  * the bool is true if there was a success, false otherwise
  */
-func insertdefined(line []string, storedData map [string]string) ([]string, bool) {
+func insertdefined(line []string, storedData map [string]string) ([]string) {
 	for index, word := range line {
 		if result, ok := storedData[word]; ok {
 			line[index] = result
 		} else {
-			return nil, false
+			return nil
 		}
 	}
-	return line, true
+	return line
 }
 
 // please make sure that line[0] is the command name without the '#'
