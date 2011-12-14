@@ -51,8 +51,17 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 				}
 			}
 		} else {
-			insertdefined( line, storedData )
-			// then print to stderr
+			resultline, _ := insertdefined( line, storedData )
+			// then print to stdout
+			result := ""
+			for index, word := range resultline {
+				if index != 0 {
+					result += " " + word
+				} else {
+					result += word
+				}
+			}
+			fmt.Println(result)
 		}
 		lineString, err = reader.ReadString('\n')
 	}
