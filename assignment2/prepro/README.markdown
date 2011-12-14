@@ -59,8 +59,15 @@ Possible running commands:
 
 Notes:
 	
-	when doing standard in, type line by and press enter when you finish
-	a line.  When you are finished, type a "." then enter.
+when doing standard in, you should type it in like this
+
+	> line1
+	> line2
+	> line3
+	> line4
+	> .
+
+period by itself on a line marks EOF
 
 ##Known Bugs
 
