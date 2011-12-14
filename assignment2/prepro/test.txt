@@ -1,7 +1,7 @@
 #ifndef TEST
 # define TEST
   before include
-  #include test.txt
+  #include text.txt
   after include 
 #undef TEST
   #ifdef TEST

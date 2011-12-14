@@ -72,5 +72,3 @@ period by itself on a line marks EOF
 ##Known Bugs
 
 * The webserver prints to standard out.
-* Including files always prints out Invalid File.
-

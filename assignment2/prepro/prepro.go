@@ -109,9 +109,7 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 	commands["include"] =
 			func ( args []string ) {
 			if len(args[1]) > 2 {
-				rangemax := len(args[1]) - 1
 				filename := args[1]
-				filename = filename[1:rangemax]
 				if file, err := os.Open(filename) ; err == nil{
 					reader := bufio.NewReader(file)
 					readloop(reader, storedData, make(map [string]int))

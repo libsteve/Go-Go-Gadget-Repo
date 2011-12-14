@@ -1,0 +1,16 @@
+#ifndef TEST
+# define TEST
+1
+  before include
+  after include
+2  
+#undef TEST
+# ifnd
+#ifdef TEST
+basjdfbdsf
+#else
+jasndfkhbdsjf
+#endif
+
+#endif
+
