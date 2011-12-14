@@ -49,7 +49,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
  */
 func handlerInput(w http.ResponseWriter, r *http.Request){
 	input := r.FormValue("input")
-	if strings.Contains(input, "include"){
+	if strings.Contains(input, "#include") || strings.Contains(input, "# include") {
 		fmt.Fprint(w, "Cannot include files on the web server")
 	}else{
 		/*take the input and stick it in your thing*/
