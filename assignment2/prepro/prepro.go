@@ -125,9 +125,6 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 	commands["undef"]	=
 		func ( args []string ) {
 			if command, ok := storedData[args[1]]; ok {
-				/*TODO  check to make sure this still works. 
-				 		you can't assign it to _ so i changed
-						it to empty string     */
 				storedData[command] = "", false
 			} else {
 				fmt.Fprint(os.Stderr, "Variable not defined")
