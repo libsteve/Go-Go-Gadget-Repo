@@ -49,9 +49,9 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 				}
 			}
 		} else {
-			//resultline := insertdefined( line, storedData )
+			resultline := insertdefined( line, storedData )
 			result := ""
-			for index, word := range line {
+			for index, word := range resultline {
 				if index != 0 {
 					result += " " + word
 				} else {
@@ -80,7 +80,13 @@ func skiploop( reader *bufio.Reader, storedData map [string]string, termination 
 	for err == nil {
 		line, iscommand := getline(lineString)
 		if iscommand {
-			if command, ok := getcommand( line ); ok {
+			command , ok:=getcommand( line)
+			if strings.HasPrefix(command, "if"){
+				skiploop(reader, storedData, termination)
+				lineString, err = reader.ReadString('\n')
+				return
+			}
+			if ok {
 				if _, terminate := termination[command]; terminate {
 					return
 				}
@@ -89,6 +95,7 @@ func skiploop( reader *bufio.Reader, storedData map [string]string, termination 
 		lineString, err = reader.ReadString('\n');
 	}
 }
+
 
 func gencommands( reader *bufio.Reader, storedData map [string]string ) map [string]func( args []string ) {
 	commands := make( map [string]func(args []string) )
@@ -250,8 +257,6 @@ func insertdefined(line []string, storedData map [string]string) ([]string) {
 	for index, word := range line {
 		if result, ok := storedData[word]; ok {
 			line[index] = result
-		} else {
-			return nil
 		}
 	}
 	return line

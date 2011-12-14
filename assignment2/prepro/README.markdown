@@ -72,6 +72,5 @@ period by itself on a line marks EOF
 ##Known Bugs
 
 * The webserver prints to standard out.
-* Doesn't understand nested conditionals.
 * Including files always prints out Invalid File.
 
