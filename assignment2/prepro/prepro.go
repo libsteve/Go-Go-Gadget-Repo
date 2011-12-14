@@ -8,7 +8,7 @@ package prepro
 
 import (
 	"os"
-//	"fmt"
+	"fmt"
 	"bufio"
 	"strings"
 )
@@ -19,7 +19,7 @@ import (
  * Parameters:
  *		reader	-	the reader to read the file with
  */
-func ReadInput( reader *Reader ) {
+func ReadInput( reader *bufio.Reader ) {
 	readloop( reader, make(map [string]string), make(map [string]int))
 }
 
@@ -32,17 +32,18 @@ func ReadInput( reader *Reader ) {
  *						i.e. the defined variables
  *		termination -	a map that holds values that cause termination
  */
-func readloop( reader *Reader, storedData map [string]string, termination map [string]int ) {
+func readloop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
 	commands := gencommands( reader, storedData )
-
-	lineString, ok := reader.ReadString(('\n').(byte));
-	for ok {
-		line, iscommand := getline(reader.ReadString(('\n').(byte)))
-		if iscommand {
+	lineString, err := reader.ReadString('\n')
+	for err == nil {
+		l, _ := reader.ReadString('\n')
+		line, isCommand := getline(l)
+		if isCommand {
 			if command, ok := getcommand( line ); ok {
 				if _, terminate := termination[command]; terminate {
 					return
 				}
+				/* TODO no clue what this could possibly mean*/
 				if function, ok := commands[command]; ok {
 					function( remove_hashtag(line) )
 					// then print to stdout
@@ -52,7 +53,7 @@ func readloop( reader *Reader, storedData map [string]string, termination map [s
 			insertdefined( line, storedData )
 			// then print to stderr
 		}
-		lineString, ok = reader.ReadString(('\n').(byte));
+		lineString, err = reader.ReadString('\n')
 	}
 }
 
@@ -65,11 +66,11 @@ func readloop( reader *Reader, storedData map [string]string, termination map [s
  *						i.e. the defined variables
  *		termination -	a map that holds values that cause termination
  */
-func skiploop( reader *Reader, storedData map [string]string, termination map [string]int ) {
+func skiploop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
 	commands := gencommands( reader, storedData )
 
-	lineString, ok := reader.ReadString(('\n').(byte));
-	for ok {
+	lineString, err := reader.ReadString('\n');
+	for err == nil {
 		line, iscommand := getline(lineString)
 		if iscommand {
 			if command, ok := getcommand( line ); ok {
@@ -78,47 +79,40 @@ func skiploop( reader *Reader, storedData map [string]string, termination map [s
 				}
 			}
 		}
-		lineString, ok = reader.ReadString(('\n').(byte));
+		lineString, err = reader.ReadString('\n');
 	}
 }
 
-
-
-
-
-
-
-
-
-func gencommands( reader *Reader, storedData map [string]string ) map [string]func( args []string ) {
-	commands := make( map [string]func() )
+func gencommands( reader *bufio.Reader, storedData map [string]string ) map [string]func( args []string ) {
+	commands := make( map [string]func(args []string) )
 
 	// add the commands to the map
 	commands["#"]		=
-		func ( args []string ) {
-			os.Stderr("This is technically not a command")
+			func ( args []string ) {
+			fmt.Fprint(os.Stderr,"This is technically not a command")
 		}, true;
 
 	commands["include"] =
-		func ( args []string ) {
+			func ( args []string ) {
 			if len(args[1]) > 2 {
 				rangemax := len(args[1]) - 1
 				filename := args[1]
 				filename = filename[1:rangemax]
-				if reader, ok := bufio.NewReader( os.Create( filename ) ); ok {
-					readloop(newreader, storedData, make(map [string]int))
+				if file, err := os.Open(filename) ; err == nil{
+					reader := bufio.NewReader(file)
+					readloop(reader, storedData, make(map [string]int))
 				} else {
-					os.Stderr("Invalid File")
+					fmt.Fprint(os.Stderr, "Invalid File")
 				}
 			} else {
-				os.Stderr("No File Specified")
+				fmt.Fprint(os.Stderr, "No File Specified")
 			}
 		}, true;
 
 	commands["define"]	=
 		func ( args []string ) {
 			var result string
-			defined, _ := args[1]
+			defined := args[1]
 			for index, word := range args {
 				if index > 1 {
 					result += word
@@ -129,47 +123,45 @@ func gencommands( reader *Reader, storedData map [string]string ) map [string]fu
 
 	commands["undef"]	=
 		func ( args []string ) {
-			if command, ok := storedData[arg[1]]; ok {
+			if command, ok := storedData[args[1]]; ok {
+				/*TODO WHAT!?!??!?!*/
 				storedData[command] = _, false
 			} else {
-				os.Stderr("Variable not defined")
+				fmt.Fprint(os.Stderr, "Variable not defined")
 			}
 		}, true;
 
 	commands["if"]		=
 		func ( args []string ) {
-			os.Stderr("Warning: This command does nothing now...")
+			fmt.Fprint(os.Stderr, "Warning: This command does nothing now...")
+			/*TODO WHAT!?!??!*/
 			ifStatement( args[string], reader, storedData )
 		}, true;
 
 	commands["ifdef"]	=
 		func ( args []string ) {
+			/*TODO WHAT!?!??!*/
 			ifStatement( args[string], reader, storedData )
 		}, true;
 
 	commands["ifndef"]	=
 		func ( args []string ) {
+			/*TODO WHAT!?!??!*/
 			ifStatement( args[string], reader, storedData )
 		}, true;
 
 	commands["elseif"]	=
 		func ( args []string ) {
-			os.Stderr("Warning: This command does nothing now...")
+			fmt.Fprint(os.Stderr,"Warning: This command does nothing now...")
 		}, true;
 
 	commands["else"]	=
 		func ( args []string ) {
-			os.Stderr("Warning: This shouldn't do things by itself...")
+			fmt.Fprint(os.Stderr,"Warning: This shouldn't do things by itself...")
 		}, true;
 
 	return commands
 }
-
-
-
-
-
-
 
 /**
  * get the line from the bitstring
@@ -181,9 +173,8 @@ func gencommands( reader *Reader, storedData map [string]string ) map [string]fu
  */
 func getline( line_string string ) ([]string, bool) {
 	line := strings.Split( " ", line_string )
-	
 	iscommand := false
-	if command, _ := line[0]; command == "#" {
+	if command := line[0]; command == "#" {
 		iscommand = true
 	} else if command[0] == "#" {
 		iscommand = true
@@ -204,8 +195,8 @@ func getline( line_string string ) ([]string, bool) {
  */
 func getcommand( line []string ) (string, bool) {
 
-	if command, ok := line[0]; command == "#" {
-		command, ok = line[1]
+	if command := line[0]; command == "#" {
+		command = line[1]
 	} else if command[0] == "#" {
 		command = command[1:len(command)]
 	} else {
@@ -248,7 +239,7 @@ func remove_hashtag( line []string ) ([]string, bool) {
  * the array of strings is the resulting line with the definitions
  * the bool is true if there was a success, false otherwise
  */
-func instertdefined(line []string, storedData map [string]string) ([]string, bool) {
+func insertdefined(line []string, storedData map [string]string) ([]string, bool) {
 	for index, word := range line {
 		if result, ok := storedData[word]; ok {
 			line[index] = result
@@ -260,7 +251,7 @@ func instertdefined(line []string, storedData map [string]string) ([]string, boo
 }
 
 // please make sure that line[0] is the command name without the '#'
-func ifStatement( args []string, reader *Reader, storedData map [string]string ) {
+func ifStatement( args []string, reader *bufio.Reader, storedData map [string]string ) {
 
 	conditional := true
 	if_type := args[0]
@@ -281,9 +272,9 @@ func ifStatement( args []string, reader *Reader, storedData map [string]string )
 		// find out if the following statement is true
 		conditional = true
 	default:
-		os.Stderr("How does this sort of thing happen?")
+		fmt.Fprintf(os.Stderr, "How does this sort of thing happen?")
 	}
-	
+
 	terminalmap := map [string]int	{	"else"  : 0, "endif" : 0	}
 	if conditional {
 		// continue on loop until else, then skip to the endif
