@@ -28,4 +28,43 @@ Handles the following customary commands lines
 Reports all errors
 
 ##Usage
-	nope doesn't do anything yet
+
+A makefile has been provided for you to use
+
+To compile the program in the command line, either of
+the following will work:
+	
+	$ make
+	$ make all
+
+To run in the command line:
+	
+	$./pp [flags] [files]
+
+To remove the executable: 
+	
+	$ make clean
+
+To generate documentation:
+
+	$ make doc
+
+Possible running commands:
+
+ 	$ ./pp -       					  : read from standard in
+ 	$ ./pp - file1.txt file2.txt ...  : read from standard in as well as files
+ 	$ ./pp -h						  : launch the webserver
+ 	$ ./pp file1.txt file2.txt ...    : read from files
+ 	$ ./pp 							  : read from standard in
+
+Notes:
+	
+	when doing standard in, type line by and press enter when you finish
+	a line.  When you are finished, type a "." then enter.
+
+##Known Bugs
+
+* The webserver will launch but the program itself will work properly
+* Doesn't understand nested conditionals.
+* Including files always prints out Invalid File.
+
