@@ -3,7 +3,12 @@
 by Kristen Mills and Steve Brunwasser
 
 ##Includes:
-	well nothing yet
+
+	doc.go
+	index.html
+	pp.go
+	prepro.go
+	Makefile
 
 ##About
 
