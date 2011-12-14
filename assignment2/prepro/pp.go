@@ -99,7 +99,9 @@ func main() {
 		prepro.ReadInput(in)
 		file.Close()
 		os.Remove("temp.txt")
-		for _, arg := range flag.Args() {
+	}
+	if !*h {
+		for _, arg := range os.Args {
 			if arg != "-"{
 				file,_ := os.Open(arg)
 				in := bufio.NewReader(file)
