@@ -20,6 +20,8 @@ import (
  *		reader	-	the reader to read the file with
  */
 func ReadInput( reader *bufio.Reader ) {
+	// testing
+	fmt.Println("initalized")
 	readloop( reader, make(map [string]string), make(map [string]int))
 }
 
@@ -36,21 +38,30 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 	commands := gencommands( reader, storedData )
 	lineString, err := reader.ReadString('\n')
 	for err == nil {
+		//testing
+		fmt.Println("looping")
 		lineString, _ = reader.ReadString('\n')
 		line, isCommand := getline(lineString)
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
+				//testing
+				fmt.Println("line is command")
 				if _, terminate := termination[command]; terminate {
+					//testing
+					fmt.Println("termination")
 					return
 				}
 
 				if function, ok := commands[command]; ok {
 					ln, _ := remove_hashtag(line)
 					function( ln )
-					// then print to stdout
+					//testing
+					fmt.Println("command executed")
 				}
 			}
 		} else {
+			//testing
+			fmt.Println("printing line")
 			resultline, _ := insertdefined( line, storedData )
 			// then print to stdout
 			result := ""

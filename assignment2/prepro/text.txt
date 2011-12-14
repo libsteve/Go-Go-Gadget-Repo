@@ -1,0 +1,26 @@
+#ifndef TEST
+# define TEST
+1
+  before include
+  #include test.txt
+  after include
+2  
+#undef TEST
+3
+  #ifdef TEST
+    should not be there
+    
+    #ifndef TEST
+      not this way
+    #else
+      not that way
+    #endif
+
+  #else
+    should be there
+  #endif
+4  
+  # ifndef TEST
+    should be there
+  #endif
+#endif
