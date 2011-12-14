@@ -52,8 +52,12 @@ func handlerInput(w http.ResponseWriter, r *http.Request){
 	if strings.Contains(input, "#include") || strings.Contains(input, "# include") {
 		fmt.Fprint(w, "Cannot include files on the web server")
 	}else{
-		/*take the input and stick it in your thing*/
-		fmt.Fprint(w, "doing it right")
+		ioutil.WriteFile("temp.txt", input, 0600)
+		file, _:= os.Open("temp.txt")
+		in := bufio.NewReader(file)
+		prepro.ReadInput(in)
+		file.Close()
+		os.Remove("temp.txt")
 	}
 }
 
@@ -92,14 +96,14 @@ func main() {
 		}
 		file, _:= os.Open("temp.txt")
 		in := bufio.NewReader(file)
-		/* read from file in */
+		prepro.ReadInput(in)
 		file.Close()
 		os.Remove("temp.txt")
 		for _, arg := range flag.Args() {
 			if arg != "-"{
 				file,_ := os.Open(arg)
 				in := bufio.NewReader(file)
-				/* read from this file*/
+				prepro.ReadInput(in)
 				file.Close()
 			}
 		}
