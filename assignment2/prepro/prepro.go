@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"bufio"
 	"strings"
+	"io"
 )
 
 /*
@@ -18,9 +19,10 @@ import (
  
   Parameters:
  		reader	-	the reader to read the file with
+		writer  -  the writer to write to
  */
-func ReadInput( reader *bufio.Reader ) {
-	readloop( reader, make(map [string]string), make(map [string]int))
+func ReadInput(writer io.Writer, reader *bufio.Reader ) {
+	readloop(writer, reader, make(map [string]string), make(map [string]int))
 }
 
 /**
@@ -32,11 +34,10 @@ func ReadInput( reader *bufio.Reader ) {
  *						i.e. the defined variables
  *		termination -	a map that holds values that cause termination
  */
-func readloop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
-	commands := gencommands( reader, storedData )
+func readloop( writer io.Writer, reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
+	commands := gencommands( writer, reader, storedData )
 	lineString, err := reader.ReadString('\n');
 	for err == nil {
-		//testing
 		line, isCommand := getline(lineString)
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
@@ -58,7 +59,7 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 					result += word
 				}
 			}
-			fmt.Println(result)
+			fmt.Fprintln(writer, result)
 		}
 		lineString, err = reader.ReadString('\n')
 	}
@@ -73,8 +74,8 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
  *						i.e. the defined variables
  *		termination -	a map that holds values that cause termination
  */
-func skiploop( reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
-	_ = gencommands( reader, storedData )
+func skiploop(writer io.Writer, reader *bufio.Reader, storedData map [string]string, termination map [string]int ) {
+	_ = gencommands(writer, reader, storedData )
 
 	lineString, err := reader.ReadString('\n');
 	for err == nil {
@@ -82,7 +83,7 @@ func skiploop( reader *bufio.Reader, storedData map [string]string, termination 
 		if iscommand {
 			command , ok:=getcommand( line)
 			if strings.HasPrefix(command, "if"){
-				skiploop(reader, storedData, termination)
+				skiploop(writer, reader, storedData, termination)
 				lineString, err = reader.ReadString('\n')
 				return
 			}
@@ -97,7 +98,7 @@ func skiploop( reader *bufio.Reader, storedData map [string]string, termination 
 }
 
 
-func gencommands( reader *bufio.Reader, storedData map [string]string ) map [string]func( args []string ) {
+func gencommands( writer io.Writer, reader *bufio.Reader, storedData map [string]string ) map [string]func( args []string ) {
 	commands := make( map [string]func(args []string) )
 
 	// add the commands to the map
@@ -112,7 +113,7 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 				filename := args[1]
 				if file, err := os.Open(filename) ; err == nil{
 					reader := bufio.NewReader(file)
-					readloop(reader, storedData, make(map [string]int))
+					readloop(writer, reader, storedData, make(map [string]int))
 				} else {
 					fmt.Fprint(os.Stderr, "Invalid File")
 				}
@@ -145,17 +146,17 @@ func gencommands( reader *bufio.Reader, storedData map [string]string ) map [str
 	commands["if"]		=
 		func ( args []string ) {
 			fmt.Fprint(os.Stderr, "Warning: This command does nothing now...")
-			ifStatement( args, reader, storedData )
+			ifStatement( writer, args, reader, storedData )
 		}, true;
 
 	commands["ifdef"]	=
 		func ( args []string ) {
-			ifStatement( args, reader, storedData )
+			ifStatement(writer, args, reader, storedData )
 		}, true;
 
 	commands["ifndef"]	=
 		func ( args []string ) {
-			ifStatement( args, reader, storedData )
+			ifStatement(writer, args, reader, storedData )
 		}, true;
 
 	commands["elseif"]	=
@@ -261,7 +262,7 @@ func insertdefined(line []string, storedData map [string]string) ([]string) {
 }
 
 // please make sure that line[0] is the command name without the '#'
-func ifStatement( args []string, reader *bufio.Reader, storedData map [string]string ) {
+func ifStatement( writer io.Writer, args []string, reader *bufio.Reader, storedData map [string]string ) {
 	conditional := true
 	if_type := args[0]
 	switch if_type{
@@ -287,10 +288,10 @@ func ifStatement( args []string, reader *bufio.Reader, storedData map [string]st
 	terminalmap := map [string]int	{	"else"  : 0, "endif" : 0	}
 	if conditional {
 		// continue on loop until else, then skip to the endif
-		readloop( reader, storedData, terminalmap )
-		skiploop( reader, storedData, terminalmap )
+		readloop(writer, reader, storedData, terminalmap )
+		skiploop(writer, reader, storedData, terminalmap )
 	} else {
 		// skip to the else or endif
-		skiploop( reader, storedData, terminalmap )
+		skiploop( writer, reader, storedData, terminalmap )
 	}
 }

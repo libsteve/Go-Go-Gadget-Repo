@@ -56,7 +56,7 @@ func handlerInput(w http.ResponseWriter, r *http.Request){
 		ioutil.WriteFile("temp.txt", []uint8(input), 0600)
 		file, _:= os.Open("temp.txt")
 		in := bufio.NewReader(file)
-		prepro.ReadInput(in)
+		prepro.ReadInput(w, in)
 		file.Close()
 		os.Remove("temp.txt")
 	}
@@ -97,7 +97,7 @@ func main() {
 		}
 		file, _:= os.Open("temp.txt")
 		in := bufio.NewReader(file)
-		prepro.ReadInput(in)
+		prepro.ReadInput(os.Stdout, in)
 		file.Close()
 		os.Remove("temp.txt")
 	}
@@ -106,7 +106,7 @@ func main() {
 			if match, _ := regexp.MatchString("(.*).txt", arg) ; match{
 				file,_ := os.Open(arg)
 				in := bufio.NewReader(file)
-				prepro.ReadInput(in)
+				prepro.ReadInput(os.Stdout, in)
 				file.Close()
 			}
 		}

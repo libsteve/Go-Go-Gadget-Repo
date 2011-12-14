@@ -69,6 +69,6 @@ when doing standard in, you should type it in like this
 
 period by itself on a line marks EOF
 
-##Known Bugs
+the webserver doesn't open automatically. It is on localhost:6060
 
-* The webserver prints to standard out.
+
