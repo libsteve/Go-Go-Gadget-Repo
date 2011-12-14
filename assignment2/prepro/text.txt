@@ -2,7 +2,6 @@
 # define TEST
 1
   before include
-  #include test.txt
   after include
 2  
 #undef TEST

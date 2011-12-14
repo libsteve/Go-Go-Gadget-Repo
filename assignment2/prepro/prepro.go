@@ -40,7 +40,6 @@ func readloop( reader *bufio.Reader, storedData map [string]string, termination 
 	for err == nil {
 		//testing
 		fmt.Println("looping")
-		lineString, _ = reader.ReadString('\n')
 		line, isCommand := getline(lineString)
 		if isCommand {
 			if command, ok := getcommand( line ); ok {
