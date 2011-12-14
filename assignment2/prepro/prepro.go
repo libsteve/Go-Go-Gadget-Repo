@@ -1,8 +1,8 @@
-/**
- * A group of functions related to preprocessing a text file
- *
- * Package Usage:
- *	<insert package usage here/>
+/*
+  A group of functions related to preprocessing a text file
+ 
+  Package Usage:
+ 	<insert package usage here/>
  */
 package prepro
 
@@ -13,11 +13,11 @@ import (
 	"strings"
 )
 
-/**
- * Start reading a file and processing its contents
- *
- * Parameters:
- *		reader	-	the reader to read the file with
+/*
+  Start reading a file and processing its contents
+ 
+  Parameters:
+ 		reader	-	the reader to read the file with
  */
 func ReadInput( reader *bufio.Reader ) {
 	// testing
