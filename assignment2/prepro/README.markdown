@@ -57,7 +57,7 @@ Possible running commands:
  	$ ./pp file1.txt file2.txt ...    : read from files
  	$ ./pp 							  : read from standard in
 
-Notes:
+###Notes:
 	
 when doing standard in, you should type it in like this
 
