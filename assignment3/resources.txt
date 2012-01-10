@@ -1,2 +1,7 @@
 http://golang.org/pkg/io/ioutil/#ReadDir
 http://golang.org/pkg/os/#FileInfo
+http://golang.org/doc/effective_go.html
+http://golang.org/doc/go_spec.html
+http://golang.org/pkg/sort/#Sort
+http://golang.org/doc/go_spec.html#String_literals
+http://golang.org/pkg/fmt/
