@@ -22,5 +22,5 @@ Writing to a file:
 	http://golang.org/pkg/io/ioutil/#WriteFile
 Looking up a contains method:
 	http://golang.org/pkg/strings/
-info on regex:
+info on regexp:
 	http://golang.org/pkg/regexp/
