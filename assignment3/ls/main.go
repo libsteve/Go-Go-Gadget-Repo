@@ -1,13 +1,23 @@
 package main
 
 import (
-	//"os"
 	"flag"
 	"fmt"
 	"ls"
 )
 /*
+ * Run the program
  *
+ * Usage: 
+ *		./ls [args] directory_name
+ *		
+ * 		possible args:
+ *		-R: go through directories recursively
+ *		-n: print with information
+ *		-t: sort files by modification time
+ *
+ *		if no arguments are getting, print out alphabetically with 1 file
+ *		per line 
  */
 func main() {
 	var R *bool
