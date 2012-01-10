@@ -1,1 +1,2 @@
-
+http://golang.org/pkg/io/ioutil/#ReadDir
+http://golang.org/pkg/os/#FileInfo
