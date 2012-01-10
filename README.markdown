@@ -32,3 +32,13 @@ Handles the following customary commands lines
 * use a new namespace for each argument
 
 Reports all errors.
+
+####Assignment 3: Templates
+
+An implentation of a simplified version of the unix command ls
+
+Handles the following command lines
+
+* Traversal and formatting for option -n
+* Template for option -R
+* Support for option -t
