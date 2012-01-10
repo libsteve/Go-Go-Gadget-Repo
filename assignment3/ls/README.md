@@ -10,3 +10,14 @@ by Kristen Mills and Steve Brunwasser
 	main.go
 
 
+##About:
+
+An implentation of a simplified version of the unix command ls
+
+Handles the following command lines
+
+* Traversal and formatting for option -n
+* Template for option -R
+* Support for option -t
+
+##Usage
