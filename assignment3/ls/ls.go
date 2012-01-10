@@ -1,10 +1,26 @@
+/**
+ * A group of functions related to listing all files in a given directory.
+ *
+ * ls.Ls() takes 2 parameters:
+ *		1) the directory name
+ *		2) a list of parameters
+ *
+ * Parameters can be any of the following:
+ *		none - list one line at a time, display files in alphabetical order, no recursive directory searching
+ *		"-n" - display with information
+ *		"-R" - go through directories recursively
+ *		"-t" - sort by timestamp
+ *
+ * Usage:
+ *		ls.Ls(directoryname, argumentlist)
+ */
 package ls
 
 import (
 	"os"
 )
 
-func Ls(dirname string, args []string) (string, os.Error) {
+func Ls(dirname string, args []string) string {
 	// args can be any of the following:
 	//		default
 	//			list one line at a time display files in alphabetical order
