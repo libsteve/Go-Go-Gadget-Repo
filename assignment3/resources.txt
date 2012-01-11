@@ -1,7 +1,6 @@
-http://golang.org/pkg/io/ioutil/#ReadDir
-http://golang.org/pkg/os/#FileInfo
-http://golang.org/doc/effective_go.html
-http://golang.org/doc/go_spec.html
-http://golang.org/pkg/sort/#Sort
-http://golang.org/doc/go_spec.html#String_literals
-http://golang.org/pkg/fmt/
+<li><a href="http://golang.org/pkg/io/ioutil/#ReadDir">Package ioutil</a>: using the io util package specifically reading a directory</li>
+<li><a href="http://golang.org/pkg/os/#FileInfo">Package os</a>: the os package specifically looking at the file info struct</li>
+<li><a href="http://golang.org/pkg/sort/#Sort">Package sort</a>: using the sort package</li>
+<li><a href="http://golang.org/doc/go_spec.html#String_literals">Go Spec - String Literals</a>: Information on string literals</li>
+<li><a href="http://golang.org/pkg/fmt/#Sprintf">Package fmt</a>: using the fmt package specifically string formatting</li>
+<li><a href="http://golang.org/pkg/container/vector/#StringVector">Package vector</a>: using the vector package specifically string vectors</li>		<li><a href="http://golang.org/pkg/container/list">Package list</a>: using the list package</li>
