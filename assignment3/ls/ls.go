@@ -37,7 +37,7 @@ type FileData struct{
 	Gid int
 	Size int64
 	Mtime string
-	name string
+	Name string
 }
 
 
