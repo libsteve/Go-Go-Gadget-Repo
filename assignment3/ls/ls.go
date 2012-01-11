@@ -20,7 +20,6 @@ import (
 	"io/ioutil"
 	"os"
 	"time"
-	"container/vector"
 	"sort"
 	"fmt"
 )
@@ -45,7 +44,7 @@ type FileData struct{
 
 
 
-func Ls(dirname string, R bool, t bool) (*vector.Vector, os.Error) {
+func Ls(dirname string, R bool, t bool) ([][]FileData, os.Error) {
 	lsdir := readdir
 	sort := alphasort
 
@@ -68,41 +67,40 @@ func Ls(dirname string, R bool, t bool) (*vector.Vector, os.Error) {
 type sortfunc func([]*os.FileInfo)
 
 // function to go through directories recursively
-func recurdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
+func recurdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 	var ok os.Error
-	directories := new(vector.Vector)
-	maindir := new(vector.Vector)
-	dirqueue := new(vector.Vector)
+	directories := make([][]FileData, 0)
+	maindir := make([]FileData, 0)
+	dirqueue := make([][]FileData, 0)
 	if fi, ok := os.Stat(filename); ok == nil {
 		if fi.IsDirectory() {
 
-			maindir.Push(fileinfo(fi))
+			maindir = append(maindir, fileinfo(fi))
 
 			if files, ok2 := ioutil.ReadDir(filename); ok2 == nil {
 				sort(files)
 				for _, file := range files {
 
 					if file.IsDirectory() {
-						if morefiles, ok3 := recurdir(file.Name, sort); ok3 == nil {
-							if morefiles.Len() > 0 {
-								morefiles.Insert(0, file)
+						if moredirs, ok3 := recurdir(file.Name, sort); ok3 == nil {
+							for _, morefiles := range moredirs {
+								dirqueue = append(dirqueue, morefiles)
 							}
-							dirqueue.Push(morefiles)
 						} else {
 							return directories, ok3
 						}
 					}
 
-					maindir.Push(fileinfo(file))
+					maindir = append(maindir, fileinfo(file))
 				}
 			} else {
 				return directories, ok2
 			}
 		}
 
-		directories.Push(maindir)
-		for _, dir := range *dirqueue {
-			directories.Push(dir)
+		directories = append(directories, maindir)
+		for _, dir := range dirqueue {
+			directories = append(directories, dir)
 		}
 		return directories, ok
 	}
@@ -111,19 +109,19 @@ func recurdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 }
 
 // function not go recursively through directories
-func readdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
+func readdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 	var ok os.Error
-	directories := new(vector.Vector)
-	maindir := new(vector.Vector)
+	directories := make([][]FileData, 0)
+	maindir := make([]FileData, 0)
 	if fi, ok := os.Stat(filename); ok == nil {
 		if fi.IsDirectory() {
 
-			maindir.Push(fileinfo(fi))
+			maindir = append(maindir, fileinfo(fi))
 
 			if files, ok2 := ioutil.ReadDir(filename); ok2 == nil {
 				sort(files)
 				for _, file := range files {
-					maindir.Push(fileinfo(file))
+					maindir = append(maindir, fileinfo(file))
 				}
 
 			} else {
@@ -131,7 +129,7 @@ func readdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 			}
 		}
 
-		directories.Push(maindir)
+		directories = append(directories, maindir)
 
 		return directories, ok
 	}
