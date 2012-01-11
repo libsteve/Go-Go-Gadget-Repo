@@ -132,9 +132,11 @@ func namedisp(file *os.FileInfo) string {
 // display function to display all information
 func infodisp(file *os.FileInfo) string {
 	file.Mode
-	file.Blocks
-	file.Blksize
-
-	file.size
+	file.Nlink
+	file.Uid
+	file.Gid
+	file.Size
+	file.Mtime_ns
+	file.Name
 }
 
