@@ -65,11 +65,11 @@ func Ls(dirname string, R bool, t bool) (*vector.Vector, os.Error) {
 
 
 // the sort function type
-type sortfunc func([]*os.FileInfo) []*os.FileInfo
+type sortfunc func([]*os.FileInfo)
 
 // function to go through directories recursively
 func recurdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
-
+	var ok os.Error
 	directories := new(vector.Vector)
 	maindir := new(vector.Vector)
 	dirqueue := new(vector.Vector)
@@ -78,43 +78,41 @@ func recurdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 
 			maindir.Push(fileinfo(fi))
 
-			if files, ok := ioutil.ReadDir(filename); ok == nil {
-				files = sort(files)
-				for index, file := range files {
+			if files, ok2 := ioutil.ReadDir(filename); ok2 == nil {
+				sort(files)
+				for _, file := range files {
 
 					if file.IsDirectory() {
-						if morefiles, ok := recurdir(file.Name, sort); ok == nil {
+						if morefiles, ok3 := recurdir(file.Name, sort); ok3 == nil {
 							if morefiles.Len() > 0 {
 								morefiles.Insert(0, file)
 							}
 							dirqueue.Push(morefiles)
 						} else {
-							return directories, ok
+							return directories, ok3
 						}
 					}
 
 					maindir.Push(fileinfo(file))
 				}
 			} else {
-				return directories, ok
+				return directories, ok2
 			}
 		}
 
 		directories.Push(maindir)
-		for index, dir := range *dirqueue {
+		for _, dir := range *dirqueue {
 			directories.Push(dir)
 		}
-
-		return directories, ok
-	} else {
 		return directories, ok
 	}
+	return directories, ok
 
 }
 
 // function not go recursively through directories
 func readdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
-
+	var ok os.Error
 	directories := new(vector.Vector)
 	maindir := new(vector.Vector)
 	if fi, ok := os.Stat(filename); ok == nil {
@@ -122,23 +120,23 @@ func readdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 
 			maindir.Push(fileinfo(fi))
 
-			if files, ok := ioutil.ReadDir(filename); ok == nil {
-				files = sort(files)
-				for index, file := range files {
+			if files, ok2 := ioutil.ReadDir(filename); ok2 == nil {
+				sort(files)
+				for _, file := range files {
 					maindir.Push(fileinfo(file))
 				}
-		
+
 			} else {
-				return directories, ok
+				return directories, ok2
 			}
 		}
 
 		directories.Push(maindir)
 
 		return directories, ok
-	} else {
-		return directories, ok
 	}
+
+	return directories, ok
 
 }
 
@@ -167,14 +165,12 @@ func (s timeSort) Swap(i, j int) {
 }
 
 // sort function to sort alphabetically
-func alphasort(files []*os.FileInfo) []*os.FileInfo {
-	sort.Sort(files.(alphaSort))
-	files.([]*os.FileInfo)
+func alphasort(files []*os.FileInfo) {
+	sort.Sort((alphaSort)(files))
 }
 // sort function to sort by timestamp
-func timesort(files []*os.FileInfo) []*os.FileInfo {
-	sort.Sort(files.(timeSort))
-	files.([]*os.FileInfo)
+func timesort(files []*os.FileInfo) {
+	sort.Sort((timeSort)(files))
 }
 
 

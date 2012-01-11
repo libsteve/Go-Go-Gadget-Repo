@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"template"
-	"ls"
+	"./ls"
 )
 /*
  * Run the program
@@ -33,16 +33,16 @@ func main() {
 
 	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
 
-	data := ls.Ls(flag.Arg(0), *R, *t)
+	data, _ := ls.Ls(flag.Arg(0), *R, *t)
 	path := flag.Arg(0)
 
-	for pos, dir := range data{
+	for pos, dir := range *data{
 		if pos != 0{
 			path+="/"
 			path+= dir[pos].Name
 			fmt.Printf("\n%s:\n", path)
 		}
-		for pos, file := range data{
+		for pos, file := range *data{
 			if pos != 0{
 				if (*n){
 					temp.Execute(os.Stdout, file)
