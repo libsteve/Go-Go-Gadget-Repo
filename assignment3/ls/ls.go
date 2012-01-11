@@ -97,6 +97,8 @@ func recurdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 			} else {
 				return directories, ok2
 			}
+		} else {
+			maindir = append(maindir, fileinfo(fi))
 		}
 
 		directories = append(directories, maindir)
@@ -128,6 +130,8 @@ func readdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 			} else {
 				return directories, ok2
 			}
+		} else {
+			maindir = append(maindir, fileinfo(os.Stat("./")), fileinfo(fi))
 		}
 
 		directories = append(directories, maindir)
