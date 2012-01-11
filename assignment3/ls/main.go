@@ -4,9 +4,8 @@ import (
 	"os" 
 	"flag"
 	"fmt"
-	"time"
 	"template"
-//	"ls"
+	"ls"
 )
 /*
  * Run the program
@@ -33,5 +32,23 @@ func main() {
 	flag.Parse()
 
 	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
+	data := ls.Ls(flag.Arg(0), *R, *t)
+	path := flag.Arg(0)
 
+	for pos, dir := range data{
+		if pos != 0{
+			path+="/" 
+			path+= dir[pos].Name
+			fmt.Printf("%s:", path)
+		}
+		for pos, file := range data{
+			if pos != 0{
+				if (*n){
+					temp.Execute(os.Stdout, file)
+				} else{
+					fmt.Println(file.name)
+				}
+			}
+		}
+	}
 }
