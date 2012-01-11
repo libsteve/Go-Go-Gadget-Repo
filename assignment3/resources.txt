@@ -4,3 +4,4 @@
 <li><a href="http://golang.org/doc/go_spec.html#String_literals">Go Spec - String Literals</a>: Information on string literals</li>
 <li><a href="http://golang.org/pkg/fmt/#Sprintf">Package fmt</a>: using the fmt package specifically string formatting</li>
 <li><a href="http://golang.org/pkg/container/vector/#StringVector">Package vector</a>: using the vector package specifically string vectors</li>		<li><a href="http://golang.org/pkg/container/list">Package list</a>: using the list package</li>
+<li><a href="http://golang.org/doc/go_tutorial.html#tmp_239">Rotting cats</a>: making and using interfaces</li>

@@ -78,13 +78,13 @@ func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, d
 			for index, file := range files {
 				if file.IsDirectory() {
 					morefiles := recurdir(file.Name, sort, disp)
-					dirqueue.Push("\n")
+					dirqueue.Push("")
 					dirqueue.AppendVector(morefiles)
 				}
 				displays.Push(disp(file))
 			}
 		}
-		for index, fidisp := range *dirqueue {
+e	for index, fidisp := range *dirqueue {
 			displays.Push(fidisp)
 		}
 		return displays, ok
@@ -127,7 +127,7 @@ func timesort(files []*os.FileInfo) []*os.FileInfo {
 
 // display function to only display the name
 func namedisp(file *os.FileInfo) string {
-	return file.Name + "\n"
+	return file.Name
 }
 // display function to display all information
 func infodisp(file *os.FileInfo) string {
