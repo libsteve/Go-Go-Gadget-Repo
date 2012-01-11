@@ -8,3 +8,7 @@
 http://golang.org/pkg/time/
 http://golangtutorials.blogspot.com/2011/10/go-templates-part-2.html
 http://golang.org/pkg/template/
+http://golang.org/doc/go_spec.html#Conversions
+http://code.google.com/p/go-wiki/wiki/SliceTricks
+http://golang.org/doc/effective_go.html#interfaces_and_types
+http://golang.org/pkg/sort/#Sort
