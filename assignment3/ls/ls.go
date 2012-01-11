@@ -131,7 +131,9 @@ func readdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 				return directories, ok2
 			}
 		} else {
-			maindir = append(maindir, fileinfo(os.Stat("./")), fileinfo(fi))
+			root, _ := os.Stat("./")
+			maindir = append(maindir, fileinfo(root))
+			maindir = append(maindir, fileinfo(fi))
 		}
 
 		directories = append(directories, maindir)
