@@ -51,4 +51,5 @@ Possible flags:
 	-n : print out file information
 	-R : Recursively go through directories
 	-t : sort by timestamp
-	without any flags, it should follow the standards of ls -1 with one 		file per line sorted alphabetically 
+	without any flags, it should follow the standards of ls -1 with one
+	file per line sorted alphabetically 
