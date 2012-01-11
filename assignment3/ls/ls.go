@@ -37,6 +37,7 @@ type FileData struct{
 	Size int64
 	Mtime string
 	Name string
+	Blocks int64
 }
 
 
@@ -218,6 +219,6 @@ func fileInfoToNode(file *os.FileInfo) FileData{
 		}
 	}
 	n := FileData{permissions, file.Nlink, file.Uid, file.Gid, file.Size,
-	timeStr, file.Name}
+	timeStr, file.Name, file.Blocks}
 	return n
 }
