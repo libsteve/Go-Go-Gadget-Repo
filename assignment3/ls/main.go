@@ -1,9 +1,12 @@
 package main
 
 import (
+	"os" 
 	"flag"
 	"fmt"
-	"ls"
+	"time"
+	"template"
+//	"ls"
 )
 /*
  * Run the program
@@ -29,6 +32,6 @@ func main() {
 	t = flag.Bool("t", false, "sort files by modification time")
 	flag.Parse()
 
-	ls.Ls(flag.Arg(0), *n, *R, *t);
+	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
 
 }

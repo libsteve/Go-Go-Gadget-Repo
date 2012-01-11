@@ -25,7 +25,17 @@ import (
 	"fmt"
 )
 
-func Ls(dirname string, n bool, R bool, t bool) string {
+type FileData struct{
+	Mode string
+	Nlink uint64
+	Uid int
+	Gid int
+	Size int64
+	Mtime string
+	name string
+}
+
+func Ls(dirname string, n bool, R bool, t bool) []FileData {
 	// args can be any of the following:
 	//		default
 	//			list one line at a time display files in alphabetical order
@@ -39,9 +49,9 @@ func Ls(dirname string, n bool, R bool, t bool) string {
 	sort := alphasort
 	disp := namedisp
 
-	if n {
-		disp = infodisp
-	}
+//	if n {
+//  	disp = infodisp
+//	}
 	if R {
 		lsdir = recurdir
 	}
@@ -130,13 +140,49 @@ func namedisp(file *os.FileInfo) string {
 	return file.Name
 }
 // display function to display all information
-func infodisp(file *os.FileInfo) string {
-	file.Mode
-	file.Nlink
-	file.Uid
-	file.Gid
-	file.Size
-	file.Mtime_ns
-	file.Name
+func infodisp(file *os.FileInfo) template {
+//	t := time.NanosecondsToLocalTime(file.Mtime_ns)
+//	timeStr := t.Format("Jan _2 15:04")
+	node := fileInfoToNode(file)
+	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
+	//str := fmt.Sprintf("%d  %d  %d  %d  %8d  %s  %s\n", file.Mode,
+	//file.Nlink,	file.Uid, file.Gid, file.Size, timeStr, file.Name)
+	return temp
 }
 
+func fileInfoToNode(file *os.FileInfo) Node{
+	t := time.NanosecondsToLocalTime(file.Mtime_ns);
+	timeStr := t.Format("Jan _2 15:04");
+	permissions :=""
+	permo := fmt.Sprintf("%o", file1.Mode)
+	rwx := permo[len(permo)-3: len(permo)]
+	if permo[0] == '4'{
+		permissions+="d"
+	}else{
+		permissions += "-"
+	}
+
+	for _, char := range rwx {
+		switch char {
+		case '0':
+			permissions+="---"
+		case '1':
+			permissions+="--x"
+		case '2':
+			permissions+="-w-"
+		case '3':
+			permissions+="-wx"
+		case '4':
+			permissions+="r--"
+		case '5':
+			permissions+="r-x"
+		case '6':
+			permissions+="rw-"
+		case '7':
+			permissions+="rwx"
+		}
+	}
+	n := Node{permissions, file.Nlink, file.Uid, file.Gid, file.Size,
+	timeStr, file.Name}
+	return n
+}
