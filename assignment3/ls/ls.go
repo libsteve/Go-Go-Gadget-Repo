@@ -20,6 +20,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"ntainer/vector"
 	"sort"
 	"fmt"
 )
@@ -57,7 +58,7 @@ func Ls(dirname string, n bool, R bool, t bool) string {
 }
 
 // function to go through directories recursively
-func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) ([]string, os.Err) {
+func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) (vector.StringVector, os.Err) {
 	// open the file
 	// if the file is a folder, for each file in it
 	//		use sort() to sort the files
@@ -67,7 +68,9 @@ func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, d
 	// for each file in the queue
 	//		put it through disp() to get display string and add it to the end of the string array
 	// return the display strings
-	display := make(map[int]string)
+
+	displays := new(vector.StringVector)
+	dirqueue := new(vector.StringVector)
 	if fi, ok = os.Stat(filename); ok {
 		if fi.IsDirectory() {
 			files := ioutil.ReadDir(filename)
@@ -75,22 +78,42 @@ func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, d
 			for index, file := range files {
 				if file.IsDirectory() {
 					morefiles := recurdir(file.Name, sort, disp)
-					// add morefiles to queue
+					dirqueue.Push("\n")
+					dirqueue.AppendVector(morefiles)
 				}
-				display[index] = disp(file), true
+				displays.Push(disp(file))
 			}
 		}
+		for index, fidisp := range *dirqueue {
+			displays.Push(fidisp)
+		}
+		return displays, ok
 	} else {
-		return ok
+		return displays, ok
 	}
 }
 // function not go recursively through directories
-func readdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) []string {
+func readdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) (vector.StringVector, os.Err) {
 	// open the file
 	// if the file is a folder, for each file in it
 	//		use sort() to sort the files
 	// use result from sort() and put it through disp() to get the display strings
 	// return the display strings
+
+	displays := new(vector.StringVector)
+	if fi, ok = os.Stat(filename); ok {
+		if fi.IsDirectory() {
+			files := ioutil.ReadDir(filename)
+			files = sort(files)
+			for index, file := range files {
+				displays.Push(disp(file))
+			}
+		}
+		return displays, ok
+	} else {
+		return displays, ok
+	}
+
 }
 
 // sort function to sort alphabetically
