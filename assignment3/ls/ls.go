@@ -140,6 +140,8 @@ func readdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 
 
 
+
+
 type alphaSort []*os.FileInfo
 func (s alphaSort) Len() int {
 	return len(s)

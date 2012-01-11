@@ -4,7 +4,6 @@ import (
 	"os"
 	"flag"
 	"fmt"
-	"container/vector"
 	"template"
 	"./ls"
 )
@@ -35,19 +34,17 @@ func main() {
 	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
 	data, _ := ls.Ls(flag.Arg(0), *R, *t)
 	path := flag.Arg(0)
-	for pos, dir := range *data{
+	for pos, dir := range data {
 		if pos != 0{
 			path+="/"
-			path+= dir.(*vector.Vector).At(pos).(ls.FileData).Name
+			path+= dir[0].Name
 			fmt.Printf("\n%s:\n", path)
 		}
-		for pos, file := range *data{
-			if pos != 0{
-				if (*n){
-					temp.Execute(os.Stdout, file)
-				} else{
-					fmt.Println(file.(ls.FileData).Name)
-				}
+		for _, file := range dir{
+			if (*n){
+				temp.Execute(os.Stdout, file)
+			} else{
+				fmt.Println(file.Name)
 			}
 		}
 	}
