@@ -17,7 +17,6 @@
 package ls
 
 import (
-	"io"
 	"io/ioutil"
 	"os"
 	"time"
@@ -41,15 +40,12 @@ type FileData struct{
 	name string
 }
 
-type FileDatavector vector.Vector FileData
-type DirDataVector vector.Vector FileDataVector
 
 
 
 
 
-
-func Ls(dirname string, R bool, t bool) (DirDataVector, os.Err) {
+func Ls(dirname string, R bool, t bool) (*vector.Vector, os.Error) {
 	lsdir := readdir
 	sort := alphasort
 
@@ -72,29 +68,35 @@ func Ls(dirname string, R bool, t bool) (DirDataVector, os.Err) {
 type sortfunc func([]*os.FileInfo) []*os.FileInfo
 
 // function to go through directories recursively
-func recurdir(filename string, sort sortfunc) (DirDataVector, os.Err) {
+func recurdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 
-	directories := new(DirDataVector)
-	maindir := new(FileDataVector)
-	dirqueue := new(FileDataVector)
-	if fi, ok = os.Stat(filename); ok {
+	directories := new(vector.Vector)
+	maindir := new(vector.Vector)
+	dirqueue := new(vector.Vector)
+	if fi, ok := os.Stat(filename); ok == nil {
 		if fi.IsDirectory() {
 
 			maindir.Push(fileinfo(fi))
 
-			files := ioutil.ReadDir(filename)
-			files = sort(files)
-			for index, file := range files {
+			if files, ok := ioutil.ReadDir(filename); ok == nil {
+				files = sort(files)
+				for index, file := range files {
 
-				if file.IsDirectory() {
-					morefiles := recurdir(file.Name, sort)
-					if morefiles.Len > 0 {
-						morefiles.Insert(0, file)
+					if file.IsDirectory() {
+						if morefiles, ok := recurdir(file.Name, sort); ok == nil {
+							if morefiles.Len() > 0 {
+								morefiles.Insert(0, file)
+							}
+							dirqueue.Push(morefiles)
+						} else {
+							return directories, ok
+						}
 					}
-					dirqueue.Push(morefiles)
-				}
 
-				maindir.Push(fileinfo(file))
+					maindir.Push(fileinfo(file))
+				}
+			} else {
+				return directories, ok
 			}
 		}
 
@@ -111,19 +113,23 @@ func recurdir(filename string, sort sortfunc) (DirDataVector, os.Err) {
 }
 
 // function not go recursively through directories
-func readdir(filename string, sort sortfunc) (DirDataVector, os.Err) {
+func readdir(filename string, sort sortfunc) (*vector.Vector, os.Error) {
 
-	directories := new(DirDataVector)
-	maindir := new(FileDataVector)
-	if fi, ok = os.Stat(filename); ok {
+	directories := new(vector.Vector)
+	maindir := new(vector.Vector)
+	if fi, ok := os.Stat(filename); ok == nil {
 		if fi.IsDirectory() {
 
 			maindir.Push(fileinfo(fi))
 
-			files := ioutil.ReadDir(filename)
-			files = sort(files)
-			for index, file := range files {
-				maindir.Push(fileinfo(file))
+			if files, ok := ioutil.ReadDir(filename); ok == nil {
+				files = sort(files)
+				for index, file := range files {
+					maindir.Push(fileinfo(file))
+				}
+		
+			} else {
+				return directories, ok
 			}
 		}
 
@@ -177,7 +183,7 @@ func timesort(files []*os.FileInfo) []*os.FileInfo {
 
 
 // display function to display all information
-func fileinfo(file *os.FileInfo) FileDataNode {
+func fileinfo(file *os.FileInfo) FileData {
 	node := fileInfoToNode(file)
 	return node
 }
@@ -187,7 +193,7 @@ func fileInfoToNode(file *os.FileInfo) FileData{
 	t := time.NanosecondsToLocalTime(file.Mtime_ns);
 	timeStr := t.Format("Jan _2 15:04");
 	permissions :=""
-	permo := fmt.Sprintf("%o", file1.Mode)
+	permo := fmt.Sprintf("%o", file.Mode)
 	rwx := permo[len(permo)-3: len(permo)]
 	if permo[0] == '4'{
 		permissions+="d"
