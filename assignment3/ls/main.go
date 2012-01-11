@@ -31,7 +31,7 @@ func main() {
 	t = flag.Bool("t", false, "sort files by modification time")
 	flag.Parse()
 
-	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
+	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{printf `%3d` .Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime}}  {{.Name}}\n"))
 	data, _ := ls.Ls(flag.Arg(0), *R, *t)
 	path := flag.Arg(0)
 	for pos, dir := range data {
@@ -40,11 +40,13 @@ func main() {
 			path+= dir[0].Name
 			fmt.Printf("\n%s:\n", path)
 		}
-		for _, file := range dir{
-			if (*n){
-				temp.Execute(os.Stdout, file)
-			} else{
-				fmt.Println(file.Name)
+		for pos1, file := range dir{
+			if pos1 != 0{
+				if (*n){
+					temp.Execute(os.Stdout, file)
+				} else{
+					fmt.Println(file.Name)
+				}
 			}
 		}
 	}
