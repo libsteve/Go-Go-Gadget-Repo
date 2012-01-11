@@ -33,12 +33,17 @@ func main() {
 	flag.Parse()
 
 	temp := template.Must(template.New("ls").Parse("{{.Mode}} {{printf `%3d` .Nlink}} {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime}}  {{.Name}}\n"))
-	data, _ := ls.Ls(flag.Arg(0), *R, *t)
-	path := flag.Arg(0)
-	if strings.HasSuffix(path, "/"){
-		path = path[0: len(path)-1]
+	for _, arg := range flag.Args(){
+		if data, error := ls.Ls(arg, *R, *t) ; error == nil{
+			path := data[0][0].Name
+			if strings.HasSuffix(path, "/"){
+				path = path[0: len(path)-1]
+			}
+			printFiles(flag.NArg(), data, path, n, temp)
+		} else{
+			fmt.Fprintln(os.Stderr, "File or directory not found")
+		}
 	}
-	printFiles(data, path, n, temp)
 }
 
 /*
@@ -59,12 +64,14 @@ func totalBlocks(dir []ls.FileData) int64{
  * given
  *
  */
-func printFiles(data [][]ls.FileData, path string, n *bool, temp *template.Template) {
+func printFiles(numArgs int, data [][]ls.FileData, path string, n *bool, temp *template.Template) {
 	for pos, dir := range data {
-		if pos != 0{
+		if pos != 0 {
 			path+="/"
 			path+= dir[0].Name
 			fmt.Printf("\n%s:\n", path)
+		}else if numArgs > 1{
+			fmt.Printf("%s:\n", path)
 		}
 		if(*n){
 			fmt.Printf("total %d\n", totalBlocks(dir))
@@ -79,5 +86,5 @@ func printFiles(data [][]ls.FileData, path string, n *bool, temp *template.Templ
 			}
 		}
 	}
-
+	fmt.Println();
 }
