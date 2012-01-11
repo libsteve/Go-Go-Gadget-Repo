@@ -84,7 +84,7 @@ func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, d
 				displays.Push(disp(file))
 			}
 		}
-e	for index, fidisp := range *dirqueue {
+	for index, fidisp := range *dirqueue {
 			displays.Push(fidisp)
 		}
 		return displays, ok
