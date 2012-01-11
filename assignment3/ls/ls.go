@@ -20,10 +20,16 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"ntainer/vector"
+	"time"
+	"container/vector"
 	"sort"
 	"fmt"
 )
+
+
+
+
+
 
 type FileData struct{
 	Mode string
@@ -35,23 +41,18 @@ type FileData struct{
 	name string
 }
 
-func Ls(dirname string, n bool, R bool, t bool) []FileData {
-	// args can be any of the following:
-	//		default
-	//			list one line at a time display files in alphabetical order
-	//		-n
-	//			display with information
-	//		-R
-	//			go through directories recursively
-	//		-t
-	//			sort by timestamp
+type FileDatavector vector.Vector FileData
+type DirDataVector vector.Vector FileDataVector
+
+
+
+
+
+
+func Ls(dirname string, R bool, t bool) (DirDataVector, os.Err) {
 	lsdir := readdir
 	sort := alphasort
-	disp := namedisp
 
-//	if n {
-//  	disp = infodisp
-//	}
 	if R {
 		lsdir = recurdir
 	}
@@ -59,98 +60,130 @@ func Ls(dirname string, n bool, R bool, t bool) []FileData {
 		sort = timesort
 	}
 
-	result := ""
-	files := lsdir(dirname, sort, disp)
-	for index, file := range files {
-		result += file + "\n"
-	}
-	return result
+	return lsdir(dirname, sort)
 }
+
+
+
+
+
+
+// the sort function type
+type sortfunc func([]*os.FileInfo) []*os.FileInfo
 
 // function to go through directories recursively
-func recurdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) (vector.StringVector, os.Err) {
-	// open the file
-	// if the file is a folder, for each file in it
-	//		use sort() to sort the files
-	//		for each file
-	//			if the file is a folder, resurse and save in a queue for later use
-	// use result from sort() and put it through disp() to get the display strings
-	// for each file in the queue
-	//		put it through disp() to get display string and add it to the end of the string array
-	// return the display strings
+func recurdir(filename string, sort sortfunc) (DirDataVector, os.Err) {
 
-	displays := new(vector.StringVector)
-	dirqueue := new(vector.StringVector)
+	directories := new(DirDataVector)
+	maindir := new(FileDataVector)
+	dirqueue := new(FileDataVector)
 	if fi, ok = os.Stat(filename); ok {
 		if fi.IsDirectory() {
+
+			maindir.Push(fileinfo(fi))
+
 			files := ioutil.ReadDir(filename)
 			files = sort(files)
 			for index, file := range files {
+
 				if file.IsDirectory() {
-					morefiles := recurdir(file.Name, sort, disp)
-					dirqueue.Push("")
-					dirqueue.AppendVector(morefiles)
+					morefiles := recurdir(file.Name, sort)
+					if morefiles.Len > 0 {
+						morefiles.Insert(0, file)
+					}
+					dirqueue.Push(morefiles)
 				}
-				displays.Push(disp(file))
+
+				maindir.Push(fileinfo(file))
 			}
 		}
-	for index, fidisp := range *dirqueue {
-			displays.Push(fidisp)
-		}
-		return displays, ok
-	} else {
-		return displays, ok
-	}
-}
-// function not go recursively through directories
-func readdir(filename string, sort func(files []*os.FileInfo) []*os.FileInfo, disp func(*os.FileInfo) string) (vector.StringVector, os.Err) {
-	// open the file
-	// if the file is a folder, for each file in it
-	//		use sort() to sort the files
-	// use result from sort() and put it through disp() to get the display strings
-	// return the display strings
 
-	displays := new(vector.StringVector)
+		directories.Push(maindir)
+		for index, dir := range *dirqueue {
+			directories.Push(dir)
+		}
+
+		return directories, ok
+	} else {
+		return directories, ok
+	}
+
+}
+
+// function not go recursively through directories
+func readdir(filename string, sort sortfunc) (DirDataVector, os.Err) {
+
+	directories := new(DirDataVector)
+	maindir := new(FileDataVector)
 	if fi, ok = os.Stat(filename); ok {
 		if fi.IsDirectory() {
+
+			maindir.Push(fileinfo(fi))
+
 			files := ioutil.ReadDir(filename)
 			files = sort(files)
 			for index, file := range files {
-				displays.Push(disp(file))
+				maindir.Push(fileinfo(file))
 			}
 		}
-		return displays, ok
+
+		directories.Push(maindir)
+
+		return directories, ok
 	} else {
-		return displays, ok
+		return directories, ok
 	}
 
+}
+
+
+
+type alphaSort []*os.FileInfo
+func (s alphaSort) Len() int {
+	return len(s)
+}
+func (s alphaSort) Less(i, j int) bool {
+	return s[i].Name < s[j].Name
+}
+func (s alphaSort) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+type timeSort []*os.FileInfo
+func (s timeSort) Len() int {
+	return len(s)
+}
+func (s timeSort) Less(i, j int) bool {
+	return s[i].Mtime_ns < s[j].Mtime_ns
+}
+func (s timeSort) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
 }
 
 // sort function to sort alphabetically
 func alphasort(files []*os.FileInfo) []*os.FileInfo {
-	// use sort.Interface somehow to sort the files
+	sort.Sort(files.(alphaSort))
+	files.([]*os.FileInfo)
 }
 // sort function to sort by timestamp
 func timesort(files []*os.FileInfo) []*os.FileInfo {
-	// use sort.Interface somehow to sort the files
+	sort.Sort(files.(timeSort))
+	files.([]*os.FileInfo)
 }
 
-// display function to only display the name
-func namedisp(file *os.FileInfo) string {
-	return file.Name
-}
+
+
+
+
+
 // display function to display all information
-func infodisp(file *os.FileInfo) template {
-//	t := time.NanosecondsToLocalTime(file.Mtime_ns)
-//	timeStr := t.Format("Jan _2 15:04")
+func fileinfo(file *os.FileInfo) FileDataNode {
 	node := fileInfoToNode(file)
-	temp := template.Must(template.New("ls").Parse("{{.Mode}}  {{.Nlink}}  {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime_ns}}  {{.Name}}\n"))
-	//str := fmt.Sprintf("%d  %d  %d  %d  %8d  %s  %s\n", file.Mode,
-	//file.Nlink,	file.Uid, file.Gid, file.Size, timeStr, file.Name)
-	return temp
+	return node
 }
 
-func fileInfoToNode(file *os.FileInfo) Node{
+// converts the *os.FileInfo to FileData
+func fileInfoToNode(file *os.FileInfo) FileData{
 	t := time.NanosecondsToLocalTime(file.Mtime_ns);
 	timeStr := t.Format("Jan _2 15:04");
 	permissions :=""
@@ -182,7 +215,7 @@ func fileInfoToNode(file *os.FileInfo) Node{
 			permissions+="rwx"
 		}
 	}
-	n := Node{permissions, file.Nlink, file.Uid, file.Gid, file.Size,
+	n := FileData{permissions, file.Nlink, file.Uid, file.Gid, file.Size,
 	timeStr, file.Name}
 	return n
 }
