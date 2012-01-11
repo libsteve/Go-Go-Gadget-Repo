@@ -82,7 +82,7 @@ func recurdir(filename string, sort sortfunc) ([][]FileData, os.Error) {
 				for _, file := range files {
 
 					if file.IsDirectory() {
-						if moredirs, ok3 := recurdir(file.Name, sort); ok3 == nil {
+						if moredirs, ok3 := recurdir(filename + "/" + file.Name, sort); ok3 == nil {
 							for _, morefiles := range moredirs {
 								dirqueue = append(dirqueue, morefiles)
 							}
