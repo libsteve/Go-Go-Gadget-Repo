@@ -28,7 +28,19 @@ import (
 
 
 
-
+/**
+ * A struct that represents the data of a file
+ *
+ * Values:
+ *		Mode string		-	permissions
+ *		Nlink uint64	-	hardlink count
+ *		Uid int			-	user id
+ *		Gid int			-	group id
+ *		Size int64		-	byte size
+ *		Mtime string	-	last modified time
+ *		Name string		-	file/folder name
+ *		Blocks int64	-	number of blocks
+ */
 type FileData struct{
 	Mode string
 	Nlink uint64
@@ -44,7 +56,24 @@ type FileData struct{
 
 
 
-
+/**
+ * Find the files and folders in the given path.
+ *
+ * Parameters:
+ *		dirname string	-	the path of the first file/folder
+ *		R bool			-	whether or not the search will be recursive
+ *		t bool			-	whether or not files are sorted by name or by time
+ *
+ * Returns:
+ *		[][]FileData	-	an array of arrays of ls.FileData structs
+ *							[n][0] is the directory that the [n] array represents
+ *							[n][x] is the file/folder in directory n
+ *
+ * Usage:
+ *		fileData := ls.Ls("../..", true, true)
+ *			search thorugh path "../.." with recursion and sort by time
+ *
+ */
 func Ls(dirname string, R bool, t bool) ([][]FileData, os.Error) {
 	lsdir := readdir
 	sort := alphasort
