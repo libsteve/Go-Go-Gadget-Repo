@@ -10,6 +10,13 @@ type Dag_struct struct{
 
 }
 
+func MakeDag() Dag_struct{
+ 	var news Dag_struct
+	news.edgeMap = make(map[string]  Edge)
+	news.connections = make([][]string, 0)
+	return news
+}
+
 func (d Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
 	if len(targets) == 0{
 		return os.NewError("targets cannot be empty")
@@ -29,7 +36,11 @@ func (d Dag_struct) Apply(target string) os.Error{
 }
 
 func (d Dag_struct) String() string{
-	return ""
+	str := ""
+//	for _, c := range d.connections{
+		
+//	}
+	return str
 }
 
 func dfs(d Dag_struct, vertex string, visited *[]string) os.Error{
