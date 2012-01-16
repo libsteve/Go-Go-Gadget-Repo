@@ -22,5 +22,9 @@ func(edge *Edge_struct) Action(target string, sources []string) os.Error {
  * Represent as a string.
  */
 func(edge *Edge_struct) String() string {
-	return ""
+	var result string = edge.targets[0]
+	for _, targ := range edge.targets[1:] {
+		result += ", " + targ
+	}
+	return result
 }
