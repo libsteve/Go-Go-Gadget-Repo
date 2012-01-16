@@ -37,9 +37,9 @@ func (d Dag_struct) Apply(target string) os.Error{
 
 func (d Dag_struct) String() string{
 	str := ""
-//	for _, c := range d.connections{
-			
-//	}
+	for _, c := range d.connections{
+		str += "(" + c[0] + ", " + c[1] + "), "
+	}
 	return str
 }
 
