@@ -4,6 +4,8 @@ import (
 	"flag"
 	"os"
 	"fmt"
+	"bufio"
+	"strings"
 )
 
 func main() {
@@ -30,8 +32,40 @@ func main() {
 		}
 	}
 
-	file.Close()
+	fmt.Println(parser(file))
 
 	/// run the command with the file and the rest of the arguments
 
+}
+
+/**
+ * Reads the specified file and parses its contents.
+ *
+ * Parameters:
+ *		file *os.File - a pointer to the file
+ *
+ * Returns:
+ *		A 2D array of strings where the first entry of the 
+ *		second-dimensional array is the target and the following 
+ *		entries are the sources related to the target
+ *
+ * Known Bugs:
+ *		If there is a tab immediately between the colin and the first source, 
+ *		then that source will not be added to the resulting list.
+ */
+func parser(file *os.File) [][]string {
+	result := make([][]string, 0)
+
+	fileReader := bufio.NewReader(file)
+	line, err := fileReader.ReadString(byte('\n'))
+	for err == nil {
+		targetResult := strings.Split(line[:len(line)-1], ":")
+		sources := strings.Split(targetResult[1], " ")
+		target := append([]string{targetResult[0]}, sources[1:]...)
+		result = append(result, target)
+
+		line, err = fileReader.ReadString(byte('\n'))
+	}
+
+	return result
 }
