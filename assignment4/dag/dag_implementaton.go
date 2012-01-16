@@ -10,11 +10,11 @@ type Dag_struct struct{
 
 }
 
-func MakeDag() Dag_struct{
+func MakeDag() *Dag_struct{
  	var news Dag_struct
 	news.edgeMap = make(map[string]  Edge)
 	news.connections = make([][]string, 0)
-	return news
+	return &news
 }
 
 func (d Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
@@ -38,7 +38,7 @@ func (d Dag_struct) Apply(target string) os.Error{
 func (d Dag_struct) String() string{
 	str := ""
 //	for _, c := range d.connections{
-		
+			
 //	}
 	return str
 }
