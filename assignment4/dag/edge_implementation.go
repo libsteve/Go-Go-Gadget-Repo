@@ -23,8 +23,10 @@ func(edge *Edge_struct) Action(target string, sources []string) os.Error {
  */
 func(edge *Edge_struct) String() string {
 	var result string = edge.targets[0]
-	for _, targ := range edge.targets[1:] {
-		result += ", " + targ
+	if len(edge.targets) > 1 {
+		for _, targ := range edge.targets[1:] {
+			result += ", " + targ
+		}
 	}
 	return result
 }
