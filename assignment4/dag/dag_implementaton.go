@@ -5,26 +5,61 @@ import (
 )
 
 type Dag_struct struct{
-
-	edges []Edge_struct
+	edgeMap map[string] Edge
 	connections [][]string
 
 }
 
-func (d Dag_struct) Add(targets, sources []string, edge Edge_struct) os.Error{
+func (d Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
 	if len(targets) == 0{
 		return os.NewError("targets cannot be empty")
 	}
 	for _, t := range targets {
-		edge.targets = append(edge.targets, t)
+		d.edgeMap[t] = edge, true
 		for _, s := range sources{
 			d.connections = append(d.connections, []string{t,s})
 		}
 	}
-	d.edges = append(d.edges, edge)
 	return nil
 }
 
 func (d Dag_struct) Apply(target string) os.Error{
-	return nil
+	visited := make([]string, 0)
+	return dfs(d, target, &visited)
 }
+
+func (d Dag_struct) String() string{
+	return ""
+}
+
+func dfs(d Dag_struct, vertex string, visited *[]string) os.Error{
+	*visited = append(*visited, vertex)
+	for _, v := range adjacent(d, vertex){
+		if !contains(visited, v){
+			dfs(d, v, visited)
+		}
+	}
+	return d.edgeMap[vertex].Action(vertex, adjacent(d, vertex))
+}
+
+
+func contains(visited* []string, visitor string) bool{
+	for _, prevVis := range *visited{
+		if prevVis == visitor{
+			return true
+		}
+	}
+	return false
+
+}
+
+func adjacent(d Dag_struct, vertex string) []string{
+	var vertices[]string
+	for _, c := range d.connections {
+		if c[0] == vertex{
+			vertices = append(vertices, c[1])
+		}
+	}
+	return vertices
+}
+
