@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 	"fmt"
+	"./dag"
 	"bufio"
 	"strings"
 )
@@ -32,10 +33,16 @@ func main() {
 		}
 	}
 
-	fmt.Println(parser(file))
+	bullshits := parser(file)
 
-	/// run the command with the file and the rest of the arguments
+	// fmt.Println(parser(file))
 
+	thedag := dag.MakeDag()
+	edge := dag.Edge_struct{}
+
+	for _, target := range bullshits {
+		thedag.Add([]string{target[0]}, target[1:], edge)
+	}
 }
 
 /**
