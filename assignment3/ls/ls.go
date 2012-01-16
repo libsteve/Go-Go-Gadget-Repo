@@ -1,18 +1,18 @@
-/**
- * A group of functions related to listing all files in a given directory.
- *
- * ls.Ls() takes 2 parameters:
- *		1) the directory name
- *		2) a list of parameters
- *
- * Parameters can be any of the following:
- *		none - list one line at a time, display files in alphabetical order, no recursive directory searching
- *		"-n" - display with information
- *		"-R" - go through directories recursively
- *		"-t" - sort by timestamp
- *
- * Usage:
- *		ls.Ls(directoryname, argumentlist)
+/*
+A group of functions related to listing all files in a given directory.
+
+ls.Ls() takes 2 parameters:
+	1) the directory name
+	2) a list of parameters
+
+Parameters can be any of the following:
+	none - list one line at a time, display files in alphabetical order, no recursive directory searching
+	"-n" - display with information
+	"-R" - go through directories recursively
+	"-t" - sort by timestamp
+
+Usage:
+	ls.Ls(directoryname, argumentlist)
  */
 package ls
 
@@ -28,18 +28,18 @@ import (
 
 
 
-/**
- * A struct that represents the data of a file
- *
- * Values:
- *		Mode string		-	permissions
- *		Nlink uint64	-	hardlink count
- *		Uid int			-	user id
- *		Gid int			-	group id
- *		Size int64		-	byte size
- *		Mtime string	-	last modified time
- *		Name string		-	file/folder name
- *		Blocks int64	-	number of blocks
+/*
+A struct that represents the data of a file
+
+Values:
+	Mode string	-	permissions
+	Nlink uint64	-	hardlink count
+	Uid int		-	user id
+	Gid int		-	group id
+	Size int64	-	byte size
+	Mtime string	-	last modified time
+	Name string	-	file/folder name
+	Blocks int64	-	number of blocks
  */
 type FileData struct{
 	Mode string
@@ -56,23 +56,23 @@ type FileData struct{
 
 
 
-/**
- * Find the files and folders in the given path.
- *
- * Parameters:
- *		dirname string	-	the path of the first file/folder
- *		R bool			-	whether or not the search will be recursive
- *		t bool			-	whether or not files are sorted by name or by time
- *
- * Returns:
- *		[][]FileData	-	an array of arrays of ls.FileData structs
- *							[n][0] is the directory that the [n] array represents
- *							[n][x] is the file/folder in directory n
- *
- * Usage:
- *		fileData := ls.Ls("../..", true, true)
- *			search thorugh path "../.." with recursion and sort by time
- *
+/*
+Find the files and folders in the given path.
+
+Parameters:
+	dirname string	-	the path of the first file/folder
+	R bool		-	whether or not the search will be recursive
+	t bool		-	whether or not files are sorted by name or by time
+
+Returns:
+	[][]FileData	-	an array of arrays of ls.FileData structs
+						[n][0] is the directory that the [n] array represents
+						[n][x] is the file/folder in directory n
+
+Usage:
+	fileData := ls.Ls("../..", true, true)
+		search thorugh path "../.." with recursion and sort by time
+
  */
 func Ls(dirname string, R bool, t bool) ([][]FileData, os.Error) {
 	lsdir := readdir
