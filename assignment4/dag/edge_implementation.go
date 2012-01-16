@@ -14,14 +14,14 @@ type Edge_struct struct{
 /**
  * Perform an action.
  */
-func(edge *Edge_struct) Action(target string, sources []string) os.Error {
+func(edge Edge_struct) Action(target string, sources []string) os.Error {
 	return nil
 }
 
 /**
  * Represent as a string.
  */
-func(edge *Edge_struct) String() string {
+func(edge Edge_struct) String() string {
 	var result string = edge.targets[0]
 	if len(edge.targets) > 1 {
 		for _, targ := range edge.targets[1:] {
