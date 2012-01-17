@@ -42,7 +42,11 @@ func main() {
 	}
 	for i, arg := range flag.Args(){
 		if i != 0 || !(*force) {
+			fmt.Println(arg + ":")
 			thedag.Apply(arg)
+			if i != flag.NArg()-1 {
+				fmt.Println()
+			}
 		}
 	}
 }
