@@ -1,4 +1,21 @@
-abe: bgd gfa
-gfa: jfn kss
-bgd: skd kse
-skd: abc dor
+# rules for this example
+
+all: 6 6/dag 6/mk
+clean:					; rm -rf 6 *.6 common/*.6
+test:
+  set -x
+  rm -f *.6 common/*.6
+  6/dag -d <mkfile -g
+  6/mk -n
+  6/mk -f - <mkfile -x
+
+6:					; mkdir 6
+6/dag: main.6				; 6l -o 6/dag -L . main.6
+6/mk: mk.6				; 6l -o 6/mk -L . mk.6
+
+main.6: main.go dag.6 common/common.6	; 6g -I . main.go
+mk.6: mk.go dag.6 common/common.6	; 6g -I . -o mk.6 mk.go
+dag.6: dag.go impl.go parser.go		; 6g dag.go impl.go parser.go
+
+common/common.6: common/common.go
+  ( cd common && 6g common.go )

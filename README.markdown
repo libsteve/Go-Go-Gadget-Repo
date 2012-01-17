@@ -42,3 +42,29 @@ Handles the following command lines
 * Traversal and formatting for option -n
 * Template for option -R
 * Support for option -t
+
+####Assignment 4: DAG and make
+
+The DAG traversal command loads a mkfile - which need not include commands -
+and for the first target, or for each target name on the command line, 
+displays the target lines depth-first, i.e., prerequisites before targets
+
+A make-like command loads a mkfile — which would include commands — and for
+the first target, or for all target names on the command line, creates a 
+shell script to execute commands if targets do not exist or prerequisites 
+are newer.
+
+* A comment extends from a special character (typically #) to the end of the
+line and is ignored.
+* Completely blank lines are ignored.
+* A dependency (one or more edges of the DAG) is a block of one or more 
+lines.
+* The first line of such a block is not indented. It contains one or more 
+target names, zero or more source names, and optional text; targets have 
+the sources as prerequisites. Targets and sources are separated by a special
+character (typically :). The optional text is preceded by a special 
+character (typically ;). Names should not contain special characters and 
+are separated from each other by white space.
+* Further lines in the block must be indented and are part of the optional 
+text. For the purposes of make, the optional text consists of shell commands
+which are expected to (re-) create the targets of the dependency.

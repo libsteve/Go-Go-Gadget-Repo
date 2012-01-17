@@ -82,7 +82,8 @@ func parser(file *os.File) [][]string {
  *
  */
 func parse(line string, result *[][]string){
-	targetResult := strings.Split(line[:len(line)-1], ":")
+	targetComments := strings.Split(line[:len(line)-1], "#")
+	targetResult := strings.Split(targetComments[0], ":");
 	if(len(targetResult) > 1){
 		sourcesCommands := strings.Split(targetResult[1], ";")
 		if len(sourcesCommands) > 0{
