@@ -2,6 +2,7 @@ package dag
 
 import (
 	"os"
+	"fmt"
 )
 
 type Dag_struct struct{
@@ -11,31 +12,32 @@ type Dag_struct struct{
 }
 
 func MakeDag() *Dag_struct{
- 	var news Dag_struct
+	news := new(Dag_struct)
 	news.edgeMap = make(map[string]  Edge)
 	news.connections = make([][]string, 0)
-	return &news
+	return news
 }
 
-func (d Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
+func (d *Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
 	if len(targets) == 0{
 		return os.NewError("targets cannot be empty")
 	}
 	for _, t := range targets {
 		d.edgeMap[t] = edge, true
 		for _, s := range sources{
+			fmt.Println(d.connections)
 			d.connections = append(d.connections, []string{t,s})
 		}
 	}
 	return nil
 }
 
-func (d Dag_struct) Apply(target string) os.Error{
+func (d *Dag_struct) Apply(target string) os.Error{
 	visited := make([]string, 0)
 	return dfs(d, target, &visited)
 }
 
-func (d Dag_struct) String() string{
+func (d *Dag_struct) String() string{
 	str := ""
 //	for _, c := range d.connections{
 			
@@ -43,7 +45,7 @@ func (d Dag_struct) String() string{
 	return str
 }
 
-func dfs(d Dag_struct, vertex string, visited *[]string) os.Error{
+func dfs(d *Dag_struct, vertex string, visited *[]string) os.Error{
 	*visited = append(*visited, vertex)
 	for _, v := range adjacent(d, vertex){
 		if !contains(visited, v){
@@ -64,7 +66,7 @@ func contains(visited* []string, visitor string) bool{
 
 }
 
-func adjacent(d Dag_struct, vertex string) []string{
+func adjacent(d *Dag_struct, vertex string) []string{
 	var vertices[]string
 	for _, c := range d.connections {
 		if c[0] == vertex{
