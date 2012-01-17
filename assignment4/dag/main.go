@@ -41,7 +41,7 @@ func main() {
 		thedag.Add([]string{target[0]}, target[1:], dag.MakeEdge())
 	}
 	for i, arg := range flag.Args(){
-		if i != 0 {
+		if i != 0 || !(*force) {
 			thedag.Apply(arg)
 		}
 	}
