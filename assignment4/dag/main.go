@@ -58,9 +58,6 @@ func main() {
  *		second-dimensional array is the target and the following 
  *		entries are the sources related to the target
  *
- * Known Bugs:
- *		If there is a tab immediately between the colin and the first source, 
- *		then that source will not be added to the resulting list.
  */
 func parser(file *os.File) [][]string {
 	result := make([][]string, 0)
@@ -76,6 +73,14 @@ func parser(file *os.File) [][]string {
 	return result
 }
 
+/**
+ * Called by the parser, does the actually parsing
+ *
+ * Parameters:
+ * 		line - a string representing the line
+ *		result - a pointer to the 2D array of targets and sources
+ *
+ */
 func parse(line string, result *[][]string){
 	targetResult := strings.Split(line[:len(line)-1], ":")
 	if(len(targetResult) > 1){
