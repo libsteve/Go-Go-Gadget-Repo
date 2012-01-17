@@ -33,15 +33,18 @@ func main() {
 		}
 	}
 
-	bullshits := parser(file)
+	parsedLines := parser(file)
 
-	// fmt.Println(parser(file))
+	fmt.Println(parsedLines)
 
 	thedag := dag.MakeDag()
-	edge := dag.Edge_struct{}
 
-	for _, target := range bullshits {
-		thedag.Add([]string{target[0]}, target[1:], edge)
+	for _, target := range parsedLines {
+		thedag.Add([]string{target[0]}, target[1:], dag.MakeEdge())
+	}
+
+	for _, target := range parsedLines {
+		thedag.Apply(target[0])
 	}
 }
 
