@@ -68,13 +68,28 @@ func parser(file *os.File) [][]string {
 	fileReader := bufio.NewReader(file)
 	line, err := fileReader.ReadString(byte('\n'))
 	for err == nil {
-		targetResult := strings.Split(line[:len(line)-1], ":")
-		sources := strings.Split(targetResult[1], " ")
-		target := append([]string{targetResult[0]}, sources[1:]...)
-		result = append(result, target)
-
+		parse(line, &result)
 		line, err = fileReader.ReadString(byte('\n'))
 	}
+	parse(line, &result)
 
 	return result
+}
+
+func parse(line string, result *[][]string){
+	targetResult := strings.Split(line[:len(line)-1], ":")
+	if(len(targetResult) > 1){
+		sourcesCommands := strings.Split(targetResult[1], ";")
+		if len(sourcesCommands) > 0{
+			sources :=strings.Split(sourcesCommands[0], " ")
+			target := []string{targetResult[0]}
+			for _, source := range sources[1:]{
+				target = append(target, strings.TrimSpace(source))
+			}
+			//deal with commands next week
+			*result = append(*result, target)
+		}else{
+			//deal with commands next week
+		}
+	}
 }

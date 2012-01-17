@@ -50,10 +50,10 @@ func dfs(d *Dag_struct, vertex string) os.Error{
 			dfs(d, v)
 		}
 	}
-	if len(adjacent(d,vertex)) == 0 {
-		return nil;
+	if( d.edgeMap[vertex] != nil){
+		return d.edgeMap[vertex].Action(vertex, adjacent(d, vertex))
 	}
-	return d.edgeMap[vertex].Action(vertex, adjacent(d, vertex))
+	return nil
 }
 
 
