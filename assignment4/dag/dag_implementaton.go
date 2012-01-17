@@ -2,13 +2,12 @@ package dag
 
 import (
 	"os"
-	"fmt"
 )
 
 type Dag_struct struct{
 	edgeMap map[string] Edge
 	connections [][]string
-
+	visited []string
 }
 
 func MakeDag() *Dag_struct{
@@ -25,7 +24,6 @@ func (d *Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
 	for _, t := range targets {
 		d.edgeMap[t] = edge, true
 		for _, s := range sources{
-			fmt.Println(d.connections)
 			d.connections = append(d.connections, []string{t,s})
 		}
 	}
@@ -33,8 +31,8 @@ func (d *Dag_struct) Add(targets, sources []string, edge Edge) os.Error{
 }
 
 func (d *Dag_struct) Apply(target string) os.Error{
-	visited := make([]string, 0)
-	return dfs(d, target, &visited)
+	//visited := make([]string, 0)
+	return dfs(d, target)
 }
 
 func (d *Dag_struct) String() string{
@@ -45,19 +43,22 @@ func (d *Dag_struct) String() string{
 	return str
 }
 
-func dfs(d *Dag_struct, vertex string, visited *[]string) os.Error{
-	*visited = append(*visited, vertex)
+func dfs(d *Dag_struct, vertex string) os.Error{
+	d.visited = append(d.visited, vertex)
 	for _, v := range adjacent(d, vertex){
-		if !contains(visited, v){
-			dfs(d, v, visited)
+		if !contains(d,v){
+			dfs(d, v)
 		}
+	}
+	if len(adjacent(d,vertex)) == 0 {
+		return nil;
 	}
 	return d.edgeMap[vertex].Action(vertex, adjacent(d, vertex))
 }
 
 
-func contains(visited* []string, visitor string) bool{
-	for _, prevVis := range *visited{
+func contains(d *Dag_struct , visitor string) bool{
+	for _, prevVis := range d.visited{
 		if prevVis == visitor{
 			return true
 		}

@@ -35,16 +35,15 @@ func main() {
 
 	parsedLines := parser(file)
 
-	fmt.Println(parsedLines)
-
 	thedag := dag.MakeDag()
 
 	for _, target := range parsedLines {
 		thedag.Add([]string{target[0]}, target[1:], dag.MakeEdge())
 	}
-
-	for _, target := range parsedLines {
-		thedag.Apply(target[0])
+	for i, arg := range flag.Args(){
+		if i != 0 {
+			thedag.Apply(arg)
+		}
 	}
 }
 
