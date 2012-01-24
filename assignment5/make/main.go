@@ -24,10 +24,13 @@ func main() {
 	}
 
 	parsedLineResult := parser.Parse(file)
+	fmt.Println(len(parsedLineResult))
+	
 
 	thedag :=  dag.New(20)
 
 	for _, tsc := range parsedLineResult {
+		fmt.Println(tsc.Target)
 		thedag.Add([]string{tsc.Target}, tsc.Sources, *edge.MakeEdge(tsc.Commands))
 	}
 	for i, arg := range flag.Args(){

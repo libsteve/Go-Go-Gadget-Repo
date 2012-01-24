@@ -31,7 +31,11 @@ func(edge Edge_struct) Action(target string, sources []string) os.Error {
 	Returns a string 
  */
 func(edge Edge_struct) String() string {
-	return ""
+	str := ""
+	for _,command := range edge.Commands{
+		str += command + "\n"
+	}
+	return str
 }
 
 /**

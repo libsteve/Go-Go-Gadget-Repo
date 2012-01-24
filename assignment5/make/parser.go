@@ -47,12 +47,8 @@ func Parse(file *os.File) []*TSC {
 	var err os.Error
 	err = nil
 	for err == nil {
-		line, err := fileReader.ReadString(byte('\n'))
-
-		if err != nil {
-			
-		}
-
+		var line string
+		line, err = fileReader.ReadString(byte('\n'))
 		if line != "" {
 			content_type := findLineContents(line)
 			if content_type == 0 {
@@ -92,6 +88,7 @@ func setUpParser() (func() []*TSC, func(string)) {
 
 	// allows the parser to return the array of pointers to TSC structs and the os.Error
 	getResultAndError := func() []*TSC {
+		addCurrent()
 		return result
 	}
 
