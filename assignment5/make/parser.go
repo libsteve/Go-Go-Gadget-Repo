@@ -97,9 +97,7 @@ func setUpParser() (func() []*TSC, func(string)) {
 		if isLineTarget(line) {
 			addCurrent()
 			resetCurrent()
-			var new_command string
-			target, sources, new_command = readAsTarget(line)
-			commands = append(commands, new_command)
+			target, sources, commands = readAsTarget(line)
 		} else {
 			commands = append(commands, readAsCommand(line))
 		}
@@ -117,12 +115,12 @@ Parameter:
 Returns:
 	a string that represents the target
 	an array of strings that reporesent the sources
-	a string that represents the first command if there is one
+	an array of length 1 with a string that represents the first command if there is one
 */
-func readAsTarget(line string) (string, []string, string) {
+func readAsTarget(line string) (string, []string, []string) {
 	var target string
 	var sources []string
-	var command string
+	var command []string
 
 	var lineBuffer string
 	command_at_end := false
@@ -153,7 +151,7 @@ func readAsTarget(line string) (string, []string, string) {
 	}
 
 	if command_at_end {
-		command = readAsCommand(lineBuffer)
+		command = []string{readAsCommand(lineBuffer)}
 	} else {
 		readSources()
 	}
