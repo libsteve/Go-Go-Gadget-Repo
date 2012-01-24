@@ -6,8 +6,6 @@ import (
 	"./dag"
 	"./edge_implementation"
 	"./parser"
-	"bufio"
-	"strings"
 )
 
 func main() {
@@ -24,12 +22,13 @@ func main() {
 		fmt.Fprintln(os.Stderr, "404: file not found.")
 		return
 	}
-	parsedLines = parser(file)
+
+	parsedLineResult := parser.Parse(file)
 
 	thedag :=  dag.New(20)
 
-	for _, tsc := range parsedLines {
-		thedag.Add(tsc->Target, tsc->Sources, *dag.MakeEdge(tsc->Commands))
+	for _, tsc := range parsedLineResult {
+		thedag.Add([]string{tsc.Target}, tsc.Sources, *edge.MakeEdge(tsc.Commands))
 	}
 	for i, arg := range flag.Args(){
 		if i != 0 {
