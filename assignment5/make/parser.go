@@ -26,8 +26,8 @@ Make a TSC struct with the given target, sources, and commands
 func NewTSC(target string, sources []string, commands []string) *TSC{
 	me := new(TSC)
 	me.Target = target
-	copy(me.Sources, sources)
-	copy(me.Commands, commands)
+	me.Sources = sources
+	me.Commands = commands
 	return me
 }
 
@@ -126,13 +126,14 @@ func readAsTarget(line string) (string, []string, []string) {
 	command_at_end := false
 
 	readSources := func() {
+		lineBuffer = strings.TrimSpace(lineBuffer)
 		sources = strings.Split(lineBuffer, " ")
 		lineBuffer = ""
 	}
 
 	function := map[string]func() {
 		":"	:	func() {
-			target = lineBuffer
+			target = strings.TrimSpace(lineBuffer)
 			lineBuffer = ""
 		},
 		";"	:	func() {
