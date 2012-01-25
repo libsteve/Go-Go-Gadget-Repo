@@ -1,10 +1,10 @@
 package main
+
 import (
 	"flag"
 	"os"
 	"fmt"
 	"./dag"
-	"./edge_implementation"
 	"./parser"
 )
 
@@ -26,20 +26,19 @@ func main() {
 	parsedLineResult := parser.Parse(file)
 	
 
-	thedag :=  dag.New(20)
+	thedag :=  dag.MakeDag()
 
 	for _, tsc := range parsedLineResult {
-		fmt.Println(tsc.Commands)
-		thedag.Add([]string{tsc.Target}, tsc.Sources, *edge.MakeEdge(tsc.Commands))
+		//fmt.Println(tsc.Sources)
+		thedag.Add([]string{tsc.Target}, tsc.Sources, *dag.MakeEdge(tsc.Commands))
 	}
 	for i, arg := range flag.Args(){
-		if i != 0 {
-			fmt.Println(arg + ":")
-			thedag.Apply(arg)
-			if i != flag.NArg()-1 {
-				fmt.Println()
-			}
+		fmt.Println(arg + ":")
+		thedag.Apply(arg)
+		if i != flag.NArg()-1 {
+			fmt.Println()
 		}
+		
 	}
 }
 

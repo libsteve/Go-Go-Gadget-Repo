@@ -1,16 +1,18 @@
 # rules for this example
 
-all: 6 6/mk
-clean:					; rm -rf 6 *.6 
+all: 6 6/dag 6/mk
+clean:					; rm -rf 6 *.6 common/*.6
 test:
   set -x
-  rm -f *.6 
+  rm -f *.6 common/*.6
   6/dag -d <mkfile -g
   6/mk -n
   6/mk -f - <mkfile -x
 
 6:					; mkdir 6
 6/mk: main.6				; 6l -o 6/mk -L . main.6
+6/dag: dag.6				; 6l -o 6/dag -L . dag.6
 
-main.6: main.go dag.6 			; 6g -I . main.go
-
+main.6: main.go dag.6			; 6g -I . main.go
+dag.6: dag.go dag_implementation.go edge_implementation.go
+  6g -I . dag.go dag_implementaion.go edg_implementaiton.go

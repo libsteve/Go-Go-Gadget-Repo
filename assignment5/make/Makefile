@@ -1,7 +1,7 @@
 include $(GOROOT)/src/MAKE.inc
 
-all:	main.go dag.6 edge_implementation.go
-	6g edge_implementation.go
+all:	main.go dag.go dag_implementation.go edge_implementation.go parser.go
+	6g dag.go dag_implementation.go edge_implementation.go 
 	6g parser.go
 	6g main.go
 	6l -o mk main.6 
