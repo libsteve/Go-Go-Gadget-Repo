@@ -21,11 +21,14 @@ func(edge Edge_struct) Action(target string, sources []string) os.Error {
 	var error os.Error
 	error = nil
 	for _, command := range edge.Commands {
+		fmt.Println(command)
 		cmdLine := strings.Split(command, " ")
 		cmd := exec.Command(cmdLine[0], cmdLine[1:]...)
 		output, error := cmd.CombinedOutput()
-		fmt.Println(string(output))
-		if error != nil { return error; }
+		if error != nil { 
+			fmt.Println(string(output))
+			return error
+		}
 	}
 	return error
 }
