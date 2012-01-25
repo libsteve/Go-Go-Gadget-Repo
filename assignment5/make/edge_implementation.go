@@ -3,6 +3,8 @@ package dag
 import(
 	"os"
 	"fmt"
+	"exec"
+	"strings"
 )
 
 /**
@@ -16,12 +18,15 @@ type Edge_struct struct{
  Perform an action.
  */
 func(edge Edge_struct) Action(target string, sources []string) os.Error {
-	result := target + ":"
-	for _, source := range sources {
-		result += " " + source
+	var error os.Error
+	error = nil
+	for _, command := range edge.Commands {
+		cmdLine := strings.Split(command, " ")
+		cmd := exec.Command(cmdLine[0], cmdLine[1:]...)
+		error = cmd.Run()
+		if error != nil { fmt.Println(error); return error; }
 	}
-	fmt.Println(result)
-	return nil
+	return error
 }
 
 /**
