@@ -1,0 +1,12 @@
+*.swp
+*.DS_Store
+*.zip
+*.6
+assignment5/make/mk
+assignment5/make/make
+assignment5/make/dag
+assignment4/dag/dag
+assignment2/prepro/pp
+assignment3/ls/ls
+assignment3/ls/main
+
