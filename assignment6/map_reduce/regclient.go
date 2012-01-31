@@ -3,7 +3,7 @@ package regclient
 import (
 	"os"
 	"rpc"
-	"./iregistry"
+	"./registry"
 )
 
 type ClientWrapper struct {

@@ -6,7 +6,7 @@ import (
 	"net"
 	"log"
 	"http"
-	"./iregistry"
+	"./registry"
 )
 
 type Reg struct {

@@ -1,0 +1,22 @@
+all: regserver regclient-test
+
+regserver: regserver.6
+	6l -o regserver regserver.6
+
+regclient-test: regclient-test.6 regclient.6
+	6l -o regclient-test regclient-test.6
+
+regserver.6: regserver.go registry.6
+	6g regserver.go
+
+regclient-test.6: regclient-test.go regclient.6
+	6g regclient-test.go
+
+regclient.6: regclient.go registry.6
+	6g regclient.go
+
+registry.6: registry.go iregistry.go
+	6g registry.go iregistry.go
+
+clean:
+	rm registry.6 regclient.6 regclient-test.6 regserver.6 regclient-test regserver
