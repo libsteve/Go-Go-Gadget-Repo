@@ -1,6 +1,10 @@
 include $(GOROOT)/src/MAKE.inc
 
-all: matrixServer matrixClient
+all: matrixServer matrixClient regserver regclient-test
+
+
+########
+### This deals with the matrix
 
 matrixServer: imatrix.6 matrixserver.go
 	6g matrixserver.go
@@ -12,6 +16,32 @@ matrixClient: imatrix.6 matrixcommon.go
 
 imatrix.6: imatrix.go matrixcommon.go
 	6g imatrix.go matrixcommon.go
+###
+########
+
+
+########
+### This deals with the registry
+
+regserver: regserver.6
+	6l -o regserver regserver.6
+
+regclient-test: regclient-test.6 regclient.6
+	6l -o regclient-test regclient-test.6
+
+regserver.6: regserver.go registry.6
+	6g regserver.go
+
+regclient-test.6: regclient-test.go regclient.6
+	6g regclient-test.go
+
+regclient.6: regclient.go registry.6
+	6g regclient.go
+
+registry.6: registry.go iregistry.go
+	6g registry.go iregistry.go
+###
+########
 
 doc:	; ( godoc -http=:6060 -path=./ & \
   sleep 5; open -a Safari http://localhost:6060/pkg/map_reduce; \
