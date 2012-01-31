@@ -27,8 +27,7 @@ func (reg *Reg) Bind(args registry.Bind, handle *int) os.Error {
 
 func (reg *Reg) Lookup(key string, pointer *interface{}) os.Error {
 	result, ok := reg.Map[key]
-	*pointer = result
-	if !ok { return os.NewError(""); } 
+	if !ok { var f interface{}; *pointer = f } else { *pointer = result }
 	return nil
 }
 
