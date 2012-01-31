@@ -1,7 +1,6 @@
 package main
 
 import(
-	"./matrixcommon"
 	"./imatrix"
 	"os"
 )
@@ -11,10 +10,10 @@ import(
  * matrix structs
  */
 type Matrix_database struct {
-	Matrices map[string]*matrixcommon.Matrix_struct
+	Matrices map[string]*matrix.Matrix_struct
 }
 
-func (m *Matrix_database) Dim(name string, matrix *matrixcommon.Matrix_struct) os.Error{
+func (m *Matrix_database) Dim(name string, matrix *matrix.Matrix_struct) os.Error{
 	mat, ok := m.Matrices[name]
 	if(!ok){
 		return os.NewError("Matrix of that name is not in the database.")
@@ -23,21 +22,21 @@ func (m *Matrix_database) Dim(name string, matrix *matrixcommon.Matrix_struct) o
 	return nil
 }
 
-func (m *Matrix_database) Make(mak matrix.Make) os.Error{
+func (m *Matrix_database) Make(mak matrix.Make, a *bool) os.Error{
 	_, ok := m.Matrices[mak.Name]
 	if ( ok ){
 		return os.NewError("Matrix of that name is already in the database.")
 	}
-	m.Matrices[mak.Name] = matrixcommon.New(mak.Name, mak.Rows, mak.Cols)
+	m.Matrices[mak.Name] = matrix.NewMatrix(mak.Name, mak.Rows, mak.Cols)
 	return nil
 }
 
-func (m *Matrix_database) Remove(name string) os.Error{
+func (m *Matrix_database) Remove(name string, a *bool ) os.Error{
 	_, ok:= m.Matrices[name]
 	if (!ok){
 		return os.NewError("Matrix of that name is not in the database.")
 	}
-	m.Matrices[name] = matrixcommon.New("", 0, 0), false
+	m.Matrices[name] = matrix.NewMatrix("", 0, 0), false
 	return nil
 }
 
@@ -52,7 +51,7 @@ func (m *Matrix_database) Get(get matrix.Get, val *float64) os.Error{
 	return nil
 }
 
-func (m *Matrix_database) Set(set matrix.Set) os.Error{
+func (m *Matrix_database) Set(set matrix.Set, a *bool) os.Error{
 	mat, ok := m.Matrices[set.Name]
 	if (!ok){
 		return os.NewError("Matrix of that name is not in the database")
@@ -61,4 +60,8 @@ func (m *Matrix_database) Set(set matrix.Set) os.Error{
 	}
 	mat.Matrix[set.I][set.J] = set.Value
 	return nil
+}
+
+func main(){
+	
 }

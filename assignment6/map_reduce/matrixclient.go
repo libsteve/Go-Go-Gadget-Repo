@@ -2,37 +2,80 @@ package main
 
 import(
 	"rpc"
-	"imatrix"
+	"./imatrix"
 	"os"
-	"matrixcommon"
+	"log"
 )
 
-// return the dimensions of an existing matrix.
-func (m *rpc.Client) Dim(name string) (rows, cols int, err os.Error){
+type Client_wrapper struct{
+	Client *rpc.Client
+}
 
+func NewClientWrapper(client *rpc.Client) *Client_wrapper{
+	news := new(Client_wrapper)
+	news.Client = client;
+	return news
+}
+
+// return the dimensions of an existing matrix.
+func (client *Client_wrapper) Dim(name string) (rows, cols int, err os.Error){
+	var reply matrix.Matrix_struct
+	err = client.Client.Call("Matrix_database.Dim", name, &reply)
+	if err != nil {
+		log.Fatal("Dimensions error:", err)
+	}
+	return reply.Rows, reply.Cols, nil
 }
 
 // create a (unique) matrix with (positive) dimensions.
-func (m *rpc.Client) Make(name string, rows, cols int) os.Error{
-	
+func (client *Client_wrapper) Make(name string, rows, cols int) os.Error{
+	var reply bool
+	mk := matrix.NewMake(name, rows, cols)
+	err := client.Client.Call("Matrix_database.Make", *mk, &reply)
+	if err != nil {
+		log.Fatal("Make error:", err)
+	}
+	return nil
 }
 
 // delete an existing matrix.
-func (m *rpc.Client) Remove(name string) os.Error{
-	
+func (client *Client_wrapper) Remove(name string) os.Error{
+	var reply bool
+	err := client.Client.Call("Matrix_database.Remove", name, &reply)
+	if err != nil {
+		log.Fatal("Remove error:", err)
+	}
+	return nil
 }
 
 // get an element value of an existing matrix.
-func (m *rpc.Client) Get(name string, i, j int) (value float64, err os.Error){
-	
+func (client *Client_wrapper) Get(name string, i, j int) (value float64, err os.Error){
+	var reply float64
+	get := matrix.NewGet(name, i, j)
+	err = client.Client.Call("Matrix.Get", get, &reply)
+	if err != nil {
+		log.Fatal("Get error:", err)
+	}
+	return reply, nil
 }
 
 // set an element value of an existing matrix.
-func (m *rpc.Client) Set(name string, i, j int, value float64) os.Error{
+func (client *Client_wrapper) Set(name string, i, j int, value float64) os.Error{
+	var reply bool
+	set := matrix.NewSet(name, i, j, value)
+	err := client.Client.Call("Matrix.Set", set, &reply)
+	if err != nil {
+		log.Fatal("Set error:", err)
+	}
+	return nil
 	
 }
 	
 // disconnect from the service.
-func (m *rpc.Client) Close() os.Error{
-	
+func (client *Client_wrapper) Close() os.Error{
+	err := client.Client.Close();
+	if err != nil{
+		log.Fatal("Close error", err)
+	}
+	return nil
 }
