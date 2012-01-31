@@ -4,6 +4,7 @@ import(
 	"rpc"
 	"./imatrix"
 	"os"
+	"fmt"
 	"log"
 )
 
@@ -52,7 +53,7 @@ func (client *Client_wrapper) Remove(name string) os.Error{
 func (client *Client_wrapper) Get(name string, i, j int) (value float64, err os.Error){
 	var reply float64
 	get := matrix.NewGet(name, i, j)
-	err = client.Client.Call("Matrix.Get", get, &reply)
+	err = client.Client.Call("Matrix_database.Get", get, &reply)
 	if err != nil {
 		log.Fatal("Get error:", err)
 	}
@@ -63,12 +64,11 @@ func (client *Client_wrapper) Get(name string, i, j int) (value float64, err os.
 func (client *Client_wrapper) Set(name string, i, j int, value float64) os.Error{
 	var reply bool
 	set := matrix.NewSet(name, i, j, value)
-	err := client.Client.Call("Matrix.Set", set, &reply)
+	err := client.Client.Call("Matrix_database.Set", set, &reply)
 	if err != nil {
 		log.Fatal("Set error:", err)
 	}
 	return nil
-	
 }
 	
 // disconnect from the service.
@@ -78,4 +78,26 @@ func (client *Client_wrapper) Close() os.Error{
 		log.Fatal("Close error", err)
 	}
 	return nil
+}
+
+func main (){
+	client, err := rpc.DialHTTP("tcp", "localhost:1234")
+	if err != nil {
+		log.Fatal("dialing:", err)
+	}
+	cw := NewClientWrapper(client)
+	cw.Make("Awesome", 5, 10)
+	r, c, _ := cw.Dim("Awesome")
+	fmt.Printf("R: %d C: %d \n", r, c)
+	count := 0
+
+	for i := 0 ; i < 5; i++ {
+		for j := 0; j <10 ; j++ {
+			cw.Set("Awesome", i, j, float64(count))
+			count++
+		}
+	}
+	val, _ := cw.Get("Awesome", 2, 4)
+	fmt.Printf("I: %d J: %d Val: %f \n", 2, 4 ,val )
+	cw.Remove("Awesome")
 }

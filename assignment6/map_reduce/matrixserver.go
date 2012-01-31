@@ -17,6 +17,12 @@ type Matrix_database struct {
 	Matrices map[string]*matrix.Matrix_struct
 }
 
+func NewMatrixDatabase() *Matrix_database{
+	news := new(Matrix_database)
+	news.Matrices = make(map[string]*matrix.Matrix_struct)
+	return news
+}
+
 func (m *Matrix_database) Dim(name string, matrix *matrix.Matrix_struct) os.Error{
 	mat, ok := m.Matrices[name]
 	if(!ok){
@@ -67,7 +73,7 @@ func (m *Matrix_database) Set(set matrix.Set, a *bool) os.Error{
 }
 
 func main(){
-	md := new(Matrix_database)
+	md := NewMatrixDatabase()
 	rpc.Register(md)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", ":1234")
