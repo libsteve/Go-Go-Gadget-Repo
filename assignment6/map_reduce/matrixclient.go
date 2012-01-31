@@ -8,7 +8,13 @@ import(
 )
 
 type Client_wrapper struct{
-	Client rpc.Client
+	Client *rpc.Client
+}
+
+func NewClientWrapper(client *rpc.Client) *Client_wrapper{
+	news := new(Client_wrapper)
+	news.Client = client;
+	return news
 }
 
 // return the dimensions of an existing matrix.
