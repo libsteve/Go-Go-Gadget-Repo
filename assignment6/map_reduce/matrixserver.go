@@ -2,6 +2,10 @@ package main
 
 import(
 	"./imatrix"
+	"rpc"
+	"net"
+	"log"
+	"http"
 	"os"
 )
 
@@ -63,5 +67,12 @@ func (m *Matrix_database) Set(set matrix.Set, a *bool) os.Error{
 }
 
 func main(){
-	
+	md := new(Matrix_database)
+	rpc.Register(md)
+	rpc.HandleHTTP()
+	l, e := net.Listen("tcp", ":1234")
+	if e != nil {
+		log.Fatal("listen error:", e)
+	}
+	http.Serve(l, nil)
 }
