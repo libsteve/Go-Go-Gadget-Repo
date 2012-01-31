@@ -43,7 +43,7 @@ func main() {
 	reg := NewReg()
 	rpc.RegisterName(registry.Name, reg)
 	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", ":"+(string)(registry.Port))
+	l, e := net.Listen("tcp", ":9901")
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
