@@ -2,7 +2,7 @@ package main
 
 import(
 	"rpc"
-	"matrix"
+	"imatrix"
 	"os"
 	"matrixcommon"
 )

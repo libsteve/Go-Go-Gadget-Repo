@@ -1,8 +1,8 @@
 package main
 
 import(
-	"matrixcommon"
-	"imatrix"
+	"./matrixcommon"
+	"./imatrix"
 	"os"
 )
 
@@ -10,25 +10,55 @@ import(
  * The Matrix database. Contains a map of string names associated with  
  * matrix structs
  */
-type Matrix_database{
-	Matrices map[string]Matrix_struct
+type Matrix_database struct {
+	Matrices map[string]*matrixcommon.Matrix_struct
 }
 
-func (m *Matrix_database) Dim(name string, matrix *Matrix_struct) os.Error{
-	
+func (m *Matrix_database) Dim(name string, matrix *matrixcommon.Matrix_struct) os.Error{
+	mat, ok := m.Matrices[name]
+	if(!ok){
+		return os.NewError("Matrix of that name is not in the database.")
+	}
+	*matrix = *mat
+	return nil
 }
 
-func (m *Matrix_database) Make(make Make) os.Error{
+func (m *Matrix_database) Make(mak matrix.Make) os.Error{
+	_, ok := m.Matrices[mak.Name]
+	if ( ok ){
+		return os.NewError("Matrix of that name is already in the database.")
+	}
+	m.Matrices[mak.Name] = matrixcommon.New(mak.Name, mak.Rows, mak.Cols)
+	return nil
 }
 
 func (m *Matrix_database) Remove(name string) os.Error{
-	
+	_, ok:= m.Matrices[name]
+	if (!ok){
+		return os.NewError("Matrix of that name is not in the database.")
+	}
+	m.Matrices[name] = matrixcommon.New("", 0, 0), false
+	return nil
 }
 
-func (m *Matrix_database) Get(get Get, val *float64) os.Error{
-	
+func (m *Matrix_database) Get(get matrix.Get, val *float64) os.Error{
+	mat, ok := m.Matrices[get.Name]
+	if (!ok){
+		return os.NewError("Matrix of that name is not in the database")
+	}else if(get.I < 0 || get.I > mat.Rows ||get.J < 0 || get.J > mat.Cols){
+		return os.NewError("I or J is out of bounds of the matrix.")
+	}
+	*val = mat.Matrix[get.I][get.J]
+	return nil
 }
 
-func (m *Matrix_database) Set(set Set) os.Error{
-	
+func (m *Matrix_database) Set(set matrix.Set) os.Error{
+	mat, ok := m.Matrices[set.Name]
+	if (!ok){
+		return os.NewError("Matrix of that name is not in the database")
+	}else if(set.I < 0 || set.I > mat.Rows ||set.J < 0 || set.J > mat.Cols){
+		return os.NewError("I or J is out of bounds of the matrix.")
+	}
+	mat.Matrix[set.I][set.J] = set.Value
+	return nil
 }
