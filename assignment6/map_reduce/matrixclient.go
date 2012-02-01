@@ -102,7 +102,9 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 	commands := parser.NewCommands()
 	dim := func(input []string) os.Error{
 		if len(input) != 1{
-			return os.NewError("Invalid arguments")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Invalid arguments"))
+			return nil
 		}
 		r, c, err := cw.Dim(input[0])
 		if err == nil{
@@ -113,36 +115,50 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 	}
 	mak := func(input []string) os.Error{
 		if (len(input) != 3){
-			return os.NewError("Invalid arguments")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Invalid arguments"))
+			return nil
 		}
 		rows, err := strconv.Atoi(input[1])
 		if (err != nil){
-			return os.NewError("Expected an int for number of rows")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for number of rows"))
+			return nil
 		}
 		cols, e := strconv.Atoi(input[2])
 		if (e != nil){
-			return os.NewError("Expect an int for number of cols")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for number of cols"))
+			return nil
 		}
 		return cw.Make(input[0], rows, cols)
 	}
 	rm := func (input []string) os.Error{
 		if (len(input) != 1){
-			return os.NewError("Invalid arguments")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Invalid arguments"))
+			return nil
 		}
 		return cw.Remove(input[0])
 	}
 
 	get := func(input []string) os.Error{
 		if len(input) != 3{
-			return os.NewError("Invalid arguments")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Invalid arguments"))
+			return nil
 		}
 		i, e1 := strconv.Atoi(input[1])
 		if (e1 != nil){
-			return os.NewError("Expect an int for i")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for i"))
+			return nil
 		}
 		j, e2 := strconv.Atoi(input[2])
 		if (e2 != nil){
-			return os.NewError("Expect an int for j")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for j"))
+			return nil
 		}
 		value, err := cw.Get(input[0], i, j)
 		if err == nil{
@@ -154,19 +170,27 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 
 	set := func(input []string) os.Error{
 		if len(input) != 4{
-			return os.NewError("Invalid arguments")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Invalid arguments"))
+			return nil
 		}
 		i, e1 := strconv.Atoi(input[1])
 		if (e1 != nil){
-			return os.NewError("Expect an int for i")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for i"))
+			return nil
 		}
 		j, e2 := strconv.Atoi(input[2])
 		if (e2 != nil){
-			return os.NewError("Expect an int for j")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected an int for j"))
+			return nil
 		}
 		v, e3 := strconv.Atof64(input[3])
 		if (e3 != nil){
-			return os.NewError("Expect a float64 for value")
+			log.SetOutput(os.Stderr)
+			log.Println(os.NewError("Expected a float64 for value"))
+			return nil
 		}
 		return cw.Set(input[0], i, j, v)
 		
@@ -197,9 +221,6 @@ func main (){
 	var l string
 	for err != os.EOF{
 		l,err = sin.ReadString('\n')
-		e := commands.Parseln(l)
-		if (e != nil){
-			fmt.Fprintln(os.Stderr, e.String())
-		}
+		commands.Parseln(l)
 	}
 }
