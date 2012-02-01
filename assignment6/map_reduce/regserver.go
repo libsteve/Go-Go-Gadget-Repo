@@ -27,12 +27,14 @@ func (reg *Reg) Bind(args registry.Bind, handle *int) os.Error {
 
 func (reg *Reg) Lookup(key string, pointer *interface{}) os.Error {
 	result, ok := reg.Map[key]
-	if !ok { var f interface{}; *pointer = f } else { *pointer = result }
+	*pointer = result
+	if !ok { return os.NewError("Key Not Found") } 
 	return nil
 }
 
 func (reg *Reg) Remove(args registry.Remove, number *int) os.Error {
 	var generic interface{}
+	if _, ok := reg.Map[args.Key]; !ok { return os.NewError("Key Not Found") }
 	reg.Map[args.Key] = generic, false
 	*number = 1
 	return nil
