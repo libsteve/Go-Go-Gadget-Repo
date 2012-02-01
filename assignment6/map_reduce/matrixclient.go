@@ -111,7 +111,7 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 			fmt.Printf("R: %d C: %d \n", r, c)
 			return nil
 		}
-		return err
+		return nil
 	}
 	mak := func(input []string) os.Error{
 		if (len(input) != 3){
@@ -164,8 +164,7 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 		if err == nil{
 			fmt.Printf("I: %d J: %d Val: %3.3f \n", i, j ,value )
 		}
-		return err
-		
+		return nil
 	}
 
 	set := func(input []string) os.Error{
@@ -221,6 +220,9 @@ func main (){
 	var l string
 	for err != os.EOF{
 		l,err = sin.ReadString('\n')
-		commands.Parseln(l)
+		e := commands.Parseln(l)
+		if (e != nil){
+			fmt.Fprintln(os.Stderr, e)
+		}
 	}
 }
