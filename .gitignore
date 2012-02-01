@@ -9,4 +9,7 @@ assignment4/dag/dag
 assignment2/prepro/pp
 assignment3/ls/ls
 assignment3/ls/main
-
+assignment6/map_reduce/matrixClient
+assignment6/map_reduce/matrixServer
+assignment6/map_reduce/regclient-test
+assignment6/map_reduce/regserver
