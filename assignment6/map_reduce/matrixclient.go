@@ -3,8 +3,11 @@ package main
 import(
 	"rpc"
 	"./imatrix"
+	"./parser"
+	"strconv"
 	"os"
 	"fmt"
+	"bufio"
 	"log"
 )
 
@@ -80,24 +83,86 @@ func (client *Client_wrapper) Close() os.Error{
 	return nil
 }
 
+func make_commands(cw *Client_wrapper) *parser.Commands{
+	commands := parser.NewCommands()
+	dim := func(input []string) os.Error{
+		if len(input) != 1{
+			return os.NewError("Invalid arguments")
+		}
+		r, c, err := cw.Dim(input[0])
+		if err == nil{
+			fmt.Printf("R: %d C: %d \n", r, c)
+			return nil
+		}
+		return err
+	}
+	mak := func(input []string) os.Error{
+		if (len(input) != 3){
+			return os.NewError("Invalid arguments")
+		}
+		rows, _ := strconv.Atoi(input[1])
+		cols, _ := strconv.Atoi(input[2])
+		return cw.Make(input[0], rows, cols)
+	}
+	rm := func (input []string) os.Error{
+		if (len(input) != 1){
+			return os.NewError("Invalid arguments")
+		}
+		return cw.Remove(input[0])
+	}
+
+	get := func(input []string) os.Error{
+		if len(input) != 3{
+			return os.NewError("Invalid arguments")
+		}
+		i, _ := strconv.Atoi(input[1])
+		j, _ := strconv.Atoi(input[2])
+		value, err := cw.Get(input[0], i, j)
+		if err == nil{
+			fmt.Printf("I: %d J: %d Val: %f \n", i, j ,value )
+		}
+		return err
+		
+	}
+
+	set := func(input []string) os.Error{
+		if len(input) != 4{
+			return os.NewError("Invalid arguments")
+		}
+		i, _ := strconv.Atoi(input[1])
+		j, _ := strconv.Atoi(input[2])
+		v, _ := strconv.Atof64(input[3])
+		return cw.Set(input[0], i, j, v)
+		
+	}
+
+	clo := func() os.Error{
+		return cw.Close()
+	}
+
+	commands.AddInputCommand("Make", mak)
+	commands.AddInputCommand("Dim", dim)
+	commands.AddInputCommand("Remove", rm)
+	commands.AddInputCommand("Get", get)
+	commands.AddInputCommand("Set", set)
+	commands.AddCommand("Close", clo)
+	return commands
+}
+
 func main (){
 	client, err := rpc.DialHTTP("tcp", "localhost:1234")
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
 	cw := NewClientWrapper(client)
-	cw.Make("Awesome", 5, 10)
-	r, c, _ := cw.Dim("Awesome")
-	fmt.Printf("R: %d C: %d \n", r, c)
-	count := 0
-
-	for i := 0 ; i < 5; i++ {
-		for j := 0; j <10 ; j++ {
-			cw.Set("Awesome", i, j, float64(count))
-			count++
+	commands := make_commands(cw)
+	sin := bufio.NewReader(os.Stdin)
+	var l string
+	for err != os.EOF{
+		l,err = sin.ReadString('\n')
+		e := commands.Parseln(l)
+		if (e != nil){
+			fmt.Fprintln(os.Stderr, e.String())
 		}
 	}
-	val, _ := cw.Get("Awesome", 2, 4)
-	fmt.Printf("I: %d J: %d Val: %f \n", 2, 4 ,val )
-	cw.Remove("Awesome")
 }

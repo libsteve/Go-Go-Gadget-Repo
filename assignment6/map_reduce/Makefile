@@ -2,6 +2,8 @@ include $(GOROOT)/src/MAKE.inc
 
 all: matrixServer matrixClient regserver regclient-test
 
+parser.6: parser.go
+	6g parser.go
 
 ########
 ### This deals with the matrix
@@ -10,7 +12,7 @@ matrixServer: imatrix.6 matrixserver.go
 	6g matrixserver.go
 	6l -o matrixServer matrixserver.6
 
-matrixClient: imatrix.6 matrixclient.go
+matrixClient: imatrix.6 matrixclient.go parser.6
 	6g matrixclient.go
 	6l -o matrixClient matrixclient.6
 

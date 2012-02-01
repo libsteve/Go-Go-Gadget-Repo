@@ -16,3 +16,5 @@ test:
 main.6: main.go dag.6			; 6g -I . main.go
 dag.6: dag.go dag_implementation.go edge_implementation.go
   6g -I . dag.go dag_implementation.go edge_implementation.go
+parser.6: parser.go
+  6g -I . parser.go
