@@ -26,9 +26,11 @@ by Steve Brunwasser and Kristen Mills
 
 ##About:
 
-The registry server is a name service to locate services which can be accessed by remote procedure calls.
+The registry server is a name service to locate services which can be
+accessed by remote procedure calls.
 
-The matrix server is a service where matrices can be defined and elements manipulated.
+The matrix server is a service where matrices can be defined and elements
+manipulated.
 
 The clients are interfaces used to connect to the servers.
 
@@ -78,16 +80,23 @@ The registry client runs until given the following command:
 
 The following are commands for the registry client with user input:
 
-	Command:			Description:
+	Command:				Description:
 
-	help				display a list of commands
-	bind: KEY, VALUE 	bind the KEY to the VALUE
-	lookup: KEY			find the VALUE for th KEY
-	remove: KEY			remove the KEY and the VALUE
-	close 				close the scession
+	help					display a list of commands
+	bind: KEY, VALUE 		bind the KEY to the VALUE
+	lookup: KEY				find the VALUE for th KEY
+	remove: KEY				remove the KEY and the VALUE
+	close 					close the session
 
 The following are commands for the matrix client with user input:
 
-	Command:			Description:
+	Command:				Description:
+	Make:NAME,ROWS,COLS		Create matrix NAME with ROWS rows and COLS cols
+	Dim:NAME				Returns the dimensions of matrix NAME
+	Remove:NAME				Remove matrix NAME from the database
+	Get:NAME,I,J			Get the value in matrix NAME at I,J
+	SET:NAME,I,J,VALUE		Set the value in matrix NAME at I,J to VALUE
+	Close					Disconnect from the server and close the program
+
 
 	
