@@ -134,7 +134,7 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 		}
 		value, err := cw.Get(input[0], i, j)
 		if err == nil{
-			fmt.Printf("I: %d J: %d Val: %3f \n", i, j ,value )
+			fmt.Printf("I: %d J: %d Val: %3.3f \n", i, j ,value )
 		}
 		return err
 		
