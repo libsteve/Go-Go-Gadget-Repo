@@ -11,10 +11,12 @@ import(
 	"log"
 )
 
+//Wrapper for an rpc client
 type Client_wrapper struct{
 	Client *rpc.Client
 }
 
+//Create a new client wrapper
 func NewClientWrapper(client *rpc.Client) *Client_wrapper{
 	news := new(Client_wrapper)
 	news.Client = client;
@@ -83,6 +85,7 @@ func (client *Client_wrapper) Close() os.Error{
 	return nil
 }
 
+//Make the commands to be used by the parser
 func make_commands(cw *Client_wrapper) *parser.Commands{
 	commands := parser.NewCommands()
 	dim := func(input []string) os.Error{
@@ -100,8 +103,14 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 		if (len(input) != 3){
 			return os.NewError("Invalid arguments")
 		}
-		rows, _ := strconv.Atoi(input[1])
-		cols, _ := strconv.Atoi(input[2])
+		rows, err := strconv.Atoi(input[1])
+		if (err != nil){
+			return os.NewError("Expected an int for number of rows")
+		}
+		cols, e := strconv.Atoi(input[2])
+		if (e != nil){
+			return os.NewError("Expect an int for number of cols")
+		}
 		return cw.Make(input[0], rows, cols)
 	}
 	rm := func (input []string) os.Error{
@@ -115,11 +124,17 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 		if len(input) != 3{
 			return os.NewError("Invalid arguments")
 		}
-		i, _ := strconv.Atoi(input[1])
-		j, _ := strconv.Atoi(input[2])
+		i, e1 := strconv.Atoi(input[1])
+		if (e1 != nil){
+			return os.NewError("Expect an int for i")
+		}
+		j, e2 := strconv.Atoi(input[2])
+		if (e2 != nil){
+			return os.NewError("Expect an int for j")
+		}
 		value, err := cw.Get(input[0], i, j)
 		if err == nil{
-			fmt.Printf("I: %d J: %d Val: %f \n", i, j ,value )
+			fmt.Printf("I: %d J: %d Val: %3f \n", i, j ,value )
 		}
 		return err
 		
@@ -129,9 +144,18 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 		if len(input) != 4{
 			return os.NewError("Invalid arguments")
 		}
-		i, _ := strconv.Atoi(input[1])
-		j, _ := strconv.Atoi(input[2])
-		v, _ := strconv.Atof64(input[3])
+		i, e1 := strconv.Atoi(input[1])
+		if (e1 != nil){
+			return os.NewError("Expect an int for i")
+		}
+		j, e2 := strconv.Atoi(input[2])
+		if (e2 != nil){
+			return os.NewError("Expect an int for j")
+		}
+		v, e3 := strconv.Atof64(input[3])
+		if (e3 != nil){
+			return os.NewError("Expect a float64 for value")
+		}
 		return cw.Set(input[0], i, j, v)
 		
 	}
@@ -149,6 +173,7 @@ func make_commands(cw *Client_wrapper) *parser.Commands{
 	return commands
 }
 
+//main for the matrix client
 func main (){
 	client, err := rpc.DialHTTP("tcp", "localhost:1234")
 	if err != nil {

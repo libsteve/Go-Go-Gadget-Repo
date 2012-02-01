@@ -17,12 +17,14 @@ type Matrix_database struct {
 	Matrices map[string]*matrix.Matrix_struct
 }
 
+//Creates a new matrix database
 func NewMatrixDatabase() *Matrix_database{
 	news := new(Matrix_database)
 	news.Matrices = make(map[string]*matrix.Matrix_struct)
 	return news
 }
 
+//finds the dimensions of a given matrix
 func (m *Matrix_database) Dim(name string, matrix *matrix.Matrix_struct) os.Error{
 	mat, ok := m.Matrices[name]
 	if(!ok){
@@ -32,6 +34,7 @@ func (m *Matrix_database) Dim(name string, matrix *matrix.Matrix_struct) os.Erro
 	return nil
 }
 
+//makes of a matrix of the given name and dimensions
 func (m *Matrix_database) Make(mak matrix.Make, a *bool) os.Error{
 	_, ok := m.Matrices[mak.Name]
 	if ( ok ){
@@ -41,6 +44,7 @@ func (m *Matrix_database) Make(mak matrix.Make, a *bool) os.Error{
 	return nil
 }
 
+//removes a matrix of a given name from the database
 func (m *Matrix_database) Remove(name string, a *bool ) os.Error{
 	_, ok:= m.Matrices[name]
 	if (!ok){
@@ -50,6 +54,7 @@ func (m *Matrix_database) Remove(name string, a *bool ) os.Error{
 	return nil
 }
 
+//Gets the value at a given location of a given matrix
 func (m *Matrix_database) Get(get matrix.Get, val *float64) os.Error{
 	mat, ok := m.Matrices[get.Name]
 	if (!ok){
@@ -61,6 +66,7 @@ func (m *Matrix_database) Get(get matrix.Get, val *float64) os.Error{
 	return nil
 }
 
+//Sets the value at a given location of a given matrix
 func (m *Matrix_database) Set(set matrix.Set, a *bool) os.Error{
 	mat, ok := m.Matrices[set.Name]
 	if (!ok){
@@ -72,6 +78,7 @@ func (m *Matrix_database) Set(set matrix.Set, a *bool) os.Error{
 	return nil
 }
 
+//Starts the server
 func main(){
 	md := NewMatrixDatabase()
 	rpc.Register(md)

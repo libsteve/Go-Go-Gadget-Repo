@@ -1,11 +1,13 @@
 package matrix
 
+//The matrix struct
 type Matrix_struct  struct {
 	Name string
 	Rows, Cols int
 	Matrix [][]float64
 }
 
+//Creates a new matrix
 func NewMatrix(name string, rows, cols int) *Matrix_struct{
 	news := new(Matrix_struct)
 	news.Name = name
@@ -18,6 +20,7 @@ func NewMatrix(name string, rows, cols int) *Matrix_struct{
 	return news
 }
 
+//creates a new make struct
 func NewMake(name string, rows, cols int) *Make{
 	news := new(Make)
 	news.Name = name
@@ -26,6 +29,7 @@ func NewMake(name string, rows, cols int) *Make{
 	return news
 }
 
+//create a new get struct
 func NewGet(name string, i, j int) *Get{
 	news := new(Get)
 	news.Name = name
@@ -34,6 +38,7 @@ func NewGet(name string, i, j int) *Get{
 	return news
 }
 
+//create a new set struct
 func NewSet(name string, i, j int, value float64) *Set{
 	news := new(Set)
 	news.Name = name
