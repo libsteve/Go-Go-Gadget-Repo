@@ -94,7 +94,7 @@ func (client *Client_wrapper) Close() os.Error{
 		log.Println("Close error: ", err)
 		return err
 	}
-	return nil
+	return os.NewError("Closing")
 }
 
 //Make the commands to be used by the parser
@@ -221,6 +221,9 @@ func main (){
 	for err != os.EOF{
 		l,err = sin.ReadString('\n')
 		e := commands.Parseln(l)
+		if(e.String() == "Closing"){
+			break
+		}
 		if (e != nil){
 			fmt.Fprintln(os.Stderr, e)
 		}
