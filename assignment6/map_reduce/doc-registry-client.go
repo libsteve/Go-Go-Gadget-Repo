@@ -11,4 +11,4 @@ Takes input from standard-in and executes the following commands:
 	remove: KEY			remove the KEY and the VALUE
 	close 				close the scession
 */
-package doc-registry-client
+package documentation

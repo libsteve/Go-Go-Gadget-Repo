@@ -7,4 +7,4 @@
 
  	After running the server, start up the client (./matrixClient)
  */
-package doc-matrix-server
+package documentation
