@@ -10,6 +10,7 @@ import (
 	"net"
 	"log"
 	"http"
+	"strconv"
 	"./registry"
 )
 
@@ -86,7 +87,7 @@ func main() {
 	reg := NewReg()
 	rpc.RegisterName(registry.Name, reg)
 	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", ":9901")
+	l, e := net.Listen("tcp", ":"+strconv.Itoa(registry.Port))
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
