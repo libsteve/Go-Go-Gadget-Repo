@@ -28,7 +28,9 @@ func (client *Client_wrapper) Dim(name string) (rows, cols int, err os.Error){
 	var reply matrix.Matrix_struct
 	err = client.Client.Call("Matrix_database.Dim", name, &reply)
 	if err != nil {
-		log.Fatal("Dimensions error:", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Dimensions error: ", err)
+		return 0, 0, err
 	}
 	return reply.Rows, reply.Cols, nil
 }
@@ -39,7 +41,9 @@ func (client *Client_wrapper) Make(name string, rows, cols int) os.Error{
 	mk := matrix.NewMake(name, rows, cols)
 	err := client.Client.Call("Matrix_database.Make", *mk, &reply)
 	if err != nil {
-		log.Fatal("Make error:", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Make error: ", err)
+		return err
 	}
 	return nil
 }
@@ -49,7 +53,9 @@ func (client *Client_wrapper) Remove(name string) os.Error{
 	var reply bool
 	err := client.Client.Call("Matrix_database.Remove", name, &reply)
 	if err != nil {
-		log.Fatal("Remove error:", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Remove error: ", err)
+		return err
 	}
 	return nil
 }
@@ -60,7 +66,9 @@ func (client *Client_wrapper) Get(name string, i, j int) (value float64, err os.
 	get := matrix.NewGet(name, i, j)
 	err = client.Client.Call("Matrix_database.Get", get, &reply)
 	if err != nil {
-		log.Fatal("Get error:", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Get error: ", err)
+		return 0, err
 	}
 	return reply, nil
 }
@@ -71,7 +79,9 @@ func (client *Client_wrapper) Set(name string, i, j int, value float64) os.Error
 	set := matrix.NewSet(name, i, j, value)
 	err := client.Client.Call("Matrix_database.Set", set, &reply)
 	if err != nil {
-		log.Fatal("Set error:", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Set error: ", err)
+		return err
 	}
 	return nil
 }
@@ -80,7 +90,9 @@ func (client *Client_wrapper) Set(name string, i, j int, value float64) os.Error
 func (client *Client_wrapper) Close() os.Error{
 	err := client.Client.Close();
 	if err != nil{
-		log.Fatal("Close error", err)
+		log.SetOutput(os.Stderr)
+		log.Println("Close error: ", err)
+		return err
 	}
 	return nil
 }
