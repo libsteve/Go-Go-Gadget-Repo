@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stderr)
+
 	nakedclient, err := rpc.DialHTTP("tcp", "localhost:9901")
 	if err != nil {
 		log.Fatal("dialing:", err)
