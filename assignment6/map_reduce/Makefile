@@ -1,6 +1,6 @@
 include $(GOROOT)/src/MAKE.inc
 
-all: matrixServer matrixClient regserver regclient-test
+all: matrixServer matrixClient regserver regclient
 
 parser.6: parser.go
 	6g parser.go
@@ -28,14 +28,14 @@ imatrix.6: imatrix.go matrixcommon.go
 regserver: regserver.6
 	6l -o regserver regserver.6
 
-regclient-test: regclient-test.6 regclient.6
-	6l -o regclient-test regclient-test.6
+regclient: regclient-run.6 regclient.6 parser.6
+	6l -o regclient regclient-run.6
 
 regserver.6: regserver.go registry.6
 	6g regserver.go
 
-regclient-test.6: regclient-test.go regclient.6
-	6g regclient-test.go
+regclient-run.6: regclient-run.go regclient.6 parser.6
+	6g regclient-run.go
 
 regclient.6: regclient.go registry.6
 	6g regclient.go

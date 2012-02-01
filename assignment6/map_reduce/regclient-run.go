@@ -3,6 +3,7 @@ package main
 import (
 	"./regclient"
 	"./parser"
+	"bufio"
 	"fmt"
 	"rpc"
 	"log"
@@ -20,14 +21,14 @@ func main() {
 	cmds := parser.NewCommands()
 
 	bind := func(args []string) os.Error {
-		if len(args) == 2 {
+		if len(args) == 2 && args[0] != "" && args[1] != "" {
 			key := args[0]
 			value := args[1]
 			_, err = client.Bind(key, ([]byte)(value))
 			if err == nil {
 				fmt.Println("Successful Binding for KEY: "+key+" VALUE: "+value)
 			} else {
-				log.Fatal("Bind Failure: " + err.String())
+				log.Println("Bind Failure: " + err.String())
 			}
 			return nil;
 		}
@@ -41,15 +42,11 @@ func main() {
 			var value interface{}
 			key := args[0]
 			value, err = client.Lookup(key, value)
-			result := (string)(value.([]byte))
 			if err == nil {
-				if result != "" {
-					fmt.Println("KEY: "+key+" Bound to VALUE: "+result)
-				} else {
-					fmt.Println("KEY: "+key+" Not Found")
-				}
+				result := (string)(value.([]byte))
+				fmt.Println("KEY: "+key+" Bound to VALUE: "+result)
 			} else {
-				log.Fatal("Lookup Failure: " + err.String())
+				log.Println("Lookup Failure: " + err.String())
 			}
 			return nil
 		}
@@ -65,7 +62,7 @@ func main() {
 			if err == nil {
 				fmt.Println("Removed KEY: "+key)
 			} else {
-				log.Fatal("Remove Failure: " + err.String())
+				log.Println("Remove Failure: " + err.String())
 			}
 			return nil
 		}
@@ -74,6 +71,8 @@ func main() {
 
 	cmds.AddInputCommand("remove", remove)
 
+	close_str := "CLOSE_PROGRAM"
+
 	close_func := func() os.Error {
 		err = client.Close()
 		if err == nil {
@@ -81,11 +80,51 @@ func main() {
 		} else {
 			log.Fatal("Close Failure: " + err.String())
 		}
-		return os.NewError("CLOSE_PROGRAM")
+		return os.NewError(close_str)
 	}
 
 	cmds.AddCommand("close", close_func)
 
-	// add read loop here
+	help := func() os.Error {
+		fmt.Println("Command:\t\tDescription:")
+		fmt.Println("")
+		fmt.Println("help\t\t\tdisplay a list of commands")
+		fmt.Println("close\t\t\tclose the scession")
+		fmt.Println("bind: KEY, VALUE\tbind the KEY to the VALUE")
+		fmt.Println("lookup: KEY\t\tfind the VALUE for th KEY")
+		fmt.Println("remove: KEY\t\tremove the KEY and the VALUE")
+		return nil
+	}
+
+	cmds.AddCommand("help", help)
+
+	sin := bufio.NewReader(os.Stdin)
+	var line string
+	var error os.Error
+	for error != os.EOF {
+		fmt.Println("")
+		line, error = sin.ReadString('\n')
+		e := cmds.Parseln(line)
+		if e != nil {
+			if e.String() == close_str { 
+				return
+			} else {
+				log.Println(e.String())
+			}
+		}
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
