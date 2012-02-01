@@ -21,4 +21,4 @@
   		disconnect from the server
   		Close:
  */
-package documentation
+package doc-matrix-client

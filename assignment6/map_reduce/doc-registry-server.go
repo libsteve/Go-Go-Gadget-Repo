@@ -2,7 +2,7 @@
 Runs the registry server.
 Is the registry server.
 */
-package documentation
+package doc-registry-server
 
 /*
 Create a new registry
