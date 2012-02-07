@@ -65,7 +65,7 @@ func (s *Screen) Add(char string, x int, y int) bool{
 Print all of the characters from the screen buffer to standard out.
 
 Method for:
-	*Screen - a pointer to a screen object
+	*Screen - a pointer to a screen struct
 */
 func (s *Screen) Print() {
 	for _, line_arr := range s.Buffer {
@@ -75,4 +75,23 @@ func (s *Screen) Print() {
 		}
 		fmt.Println(line)
 	}
+}
+
+/*
+Change the dimensions of the screen.
+
+Method for:
+	*Screen - a pointer to a screen struct
+
+Parameters:
+	height - the new integer height (rows) of the screen
+	width - the new integer width (columns) of the screen
+
+Post:
+	s.Buffer - the screen's buffer is reset
+*/
+func (s *Screen) ChangeScreenSize(height int, width int) {
+	s.Height = height
+	s.Width = width
+	s.Buffer = new([height][width]string)
 }
