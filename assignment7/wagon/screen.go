@@ -4,6 +4,7 @@ A package to represent a grid-based screen of certain integer height and width.
 package screen
 
 import "fmt"
+//import "terminal"
 
 /*
 A Screen Struct to represent a screen with height and width.
@@ -11,7 +12,7 @@ A Screen Struct to represent a screen with height and width.
 type Screen struct {
 	Height int
 	Width int
-	Buffer *[][]string
+	Buffer [][]string
 	DefaultChar string
 }
 
@@ -26,13 +27,30 @@ Returns:
 	*Screen - a pointer to the screen representation
 */
 func NewScreen(height int, width int) *Screen {
-	s = new(Screen)
+	s := new(Screen)
 	s.Height = height
 	s.Width = width
-	s.Buffer = new([height][width]string)
+	s.Buffer = make([][]string, height)
+	for i, _ := range s.Buffer { s.Buffer[i] = make([]string, width) }
 	s.DefaultChar = " "
 	return s
 }
+
+/*
+Create a new screen.
+Uses the terminal's dimensions for the screen's dimensions.
+Terminal only exists on the weekly build of GO.
+
+Returns:
+	*Screen - a pointer to the screen representation
+*/
+//func NewScreen() *Screen {
+//	s = new(Screen)
+//	s.Width, s.Height = terminal.GetSize(1) // fd = 1 is standard out
+//	s.Buffer = new([s.Height][s.Width]string)
+//	s.DefaultChar = " "
+//	return s
+//}
 
 /*
 Add a character to the screen at the specified x (row) and y (column) coordinates.
@@ -56,9 +74,8 @@ func (s *Screen) Add(char string, x int, y int) bool{
 		if len(char) > 1 { return false }
 		s.Buffer[x][y] = char
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 /*
@@ -66,6 +83,9 @@ Print all of the characters from the screen buffer to standard out.
 
 Method for:
 	*Screen - a pointer to a screen struct
+	
+Post:
+	s.Buffer - the screen's buffer is reset
 */
 func (s *Screen) Print() {
 	for _, line_arr := range s.Buffer {
@@ -75,6 +95,8 @@ func (s *Screen) Print() {
 		}
 		fmt.Println(line)
 	}
+	s.Buffer = make([][]string, s.Height)
+	for i, _ := range s.Buffer { s.Buffer[i] = make([]string, s.Width) }
 }
 
 /*
@@ -93,5 +115,6 @@ Post:
 func (s *Screen) ChangeScreenSize(height int, width int) {
 	s.Height = height
 	s.Width = width
-	s.Buffer = new([height][width]string)
+	s.Buffer = make([][]string, height)
+	for i, _ := range s.Buffer { s.Buffer[i] = make([]string, width) }
 }
