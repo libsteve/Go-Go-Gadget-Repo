@@ -3,8 +3,8 @@ include $(GOROOT)/src/MAKE.inc
 all: wag
 
 wag: main.go wagon.6 screen.6
-	6g wagon.go
-	6l -o wag wagon.go
+	6g main.go
+	6l -o wag main.6
 
 wagon.6: wagon.go
 	6g wagon.go
