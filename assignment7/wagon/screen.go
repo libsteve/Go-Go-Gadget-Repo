@@ -144,7 +144,7 @@ Set the standard in and out screens to raw mode.
 Returns:
 	func() os.Error - a function used for restoring the screens to their pre-raw mode
 */
-func MakeScreenRaw() func() {
+func MakeRaw() func() {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 	        panic(err)

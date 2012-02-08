@@ -108,6 +108,18 @@ func (w *Wagon) Add(wheel *Wheel) {
 	}
 }
 
+func (w.Wagon) AddToScreen(screen_add func(char, int, int) bool) {
+	var current *Wheel
+	good := true
+
+	current = w.Head
+	for good {
+		screen_add(current.Value, current.X, current.Y)
+		if current.Next == nil { good = false; break }
+		current = current.Next
+	}
+}
+
 /*
 Move the wagon either forward or backward.
 
