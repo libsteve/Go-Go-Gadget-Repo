@@ -3,6 +3,7 @@ A package to represent a grid-based screen of certain integer height and width.
 */
 package screen
 
+import ( "os"; "strconv" )
 //import ( "./terminal"; "bufio" )
 
 /*

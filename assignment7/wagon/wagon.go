@@ -55,7 +55,7 @@ Returns:
 	*Wheel - a pointer to a wheel with the given values
 */
 func NewWheel(value string, x int, y int) *Wheel {
-	w = new(Wheel)
+	w := new(Wheel)
 	w.Value = value
 	w.X = x
 	w.Y = y
@@ -84,7 +84,7 @@ Returns:
 	*Wagon - a pointer to a fresh new wagon train.
 */
 func NewWagon() *Wagon {
-	w = new(Wagon)
+	w := new(Wagon)
 	return w
 }
 
@@ -108,13 +108,40 @@ func (w *Wagon) Add(wheel *Wheel) {
 	}
 }
 
-func (w.Wagon) AddToScreen(screen_add func(char, int, int) bool) {
+/*
+An interfaces for anything that the wagon is going to write to.
+*/
+type Screen interface{
+	/*
+	Add the character to the string at the goven coordinates.
+
+	Parameters:
+		char - the character to add
+		x - the x position to add to (the column)
+		y - the y position to add to (the row)
+
+	Returns:
+		bool - true if successful, false otherwise
+	*/
+	Add(char string, x, y int) bool
+}
+
+/*
+Write the wagon to the given screen.
+
+Parameters:
+	Screen - the screen writer to add to
+
+Post:
+	The wagon data is given to the screen
+*/
+func (w *Wagon) AddToScreen(s Screen) {
 	var current *Wheel
 	good := true
 
 	current = w.Head
 	for good {
-		screen_add(current.Value, current.X, current.Y)
+		s.Add(current.Value, current.X, current.Y)
 		if current.Next == nil { good = false; break }
 		current = current.Next
 	}
