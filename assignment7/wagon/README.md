@@ -54,8 +54,8 @@ To move the tail of the wagon, press:
 
 To add a wheel to the wagon train, press:
 
-	a 	-	add a wheel to the bottom of the screen
-	A 	-	add a wheel to the top of the screen
+	a 	-	add a wheel to the top of the screen and set it as the wagon's head
+	A 	-	add a wheel to the bottom of the screen and set it as the wagon's tail
 
 To quit the program, press:
 

@@ -97,15 +97,35 @@ Method for:
 Parameters:
 	wheel - a pointer to the wheel to add to the wagon
 */
-func (w *Wagon) Add(wheel *Wheel) {
+func (w *Wagon) AddToHead(wheel *Wheel) {
+	w.Add(w.Head, wheel)
+}
+
+/*
+Add a wheel to the wagon train.
+
+Method for:
+	*Wagon - a pointer to the wagon to add a wheel to
+
+Parameters:
+	wheel - a pointer to the wheel to add to the wagon
+*/
+func (w *Wagon) Add(dest *Wheel, wheel *Wheel) {
 	if w.Tail == nil {
 		w.Head = wheel
 		w.Tail = wheel
-	} else {
+	}
+	if dest == w.Head {
 		w.Tail.Next = wheel
 		wheel.Prev = w.Tail
 		w.Tail = wheel
+	} else if dest == w.Tail {
+		w.Head.Prev = wheel
+		wheel.Next = w.Head
+		w.Head = wheel
 	}
+
+	
 }
 
 /*

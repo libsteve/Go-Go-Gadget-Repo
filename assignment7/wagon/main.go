@@ -1,6 +1,6 @@
 package main
 
-import ( "./wagon"; "./screen"; "fmt")
+import ( "./wagon"; "./screen" )
 
 func main() {
 	w := wagon.NewWagon()
@@ -8,14 +8,14 @@ func main() {
 
 
 
-	w.Add(wagon.NewWheel("A", 5, 5))
-	w.Add(wagon.NewWheel("B", 5, 6))
-	start := "C"
+	w.AddToHead(wagon.NewWheel("A", 5, 5))
+	w.AddToHead(wagon.NewWheel("B", 5, 6))
+	start := 'C'
 	w.AddToScreen(s)
 	s.Print()
 	var c string
 	for {
-		fmt.Scanf("%s",c)
+		c, _ = screen.ReadChar()
 		switch c{
 
 			case "U":
@@ -37,10 +37,10 @@ func main() {
 			case "q":
 				break
 			case "a":
-				w.Add(w.Head, wagon.NewWheel(start,0, 0))
+				w.Add(w.Head, wagon.NewWheel((string)(start),0, 0))
 				start+=1
 			case "A":
-				w.Add(wagon.NewWheel(start, 24, 80))
+				w.Add(w.Tail, wagon.NewWheel((string)(start), 24, 80))
 				start +=1
 		}
 
