@@ -153,3 +153,19 @@ Returns:
 //	}
 //	return reset
 //}
+
+/*
+Read one character from standard input.
+
+Returns:
+	string - the character read from standard in
+	os.Error - an error if the read went wrong, nil if successful
+*/
+func ReadChar() (string, os.Error) {
+	one_char := " "
+	char_byte := ([]byte)(one_char)
+	_, err := os.Stdin.Read(char_byte)
+	if err != nil { return "", err }
+	result_char := (string)(char_byte)
+	return result_char, nil
+}
