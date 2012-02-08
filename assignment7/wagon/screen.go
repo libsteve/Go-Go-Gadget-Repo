@@ -3,8 +3,7 @@ A package to represent a grid-based screen of certain integer height and width.
 */
 package screen
 
-import "./terminal"
-import "bufio"
+//import ( "./terminal"; "bufio" )
 
 /*
 A Screen Struct to represent a screen with height and width.
@@ -32,14 +31,14 @@ Parameters:
 Returns:
 	*Screen - a pointer to the screen representation
 */
-//func NewScreen(height int, width int) *Screen {
-//	s := new(Screen)
-//	s.Height = height
-//	s.Width = width
-//	s.EmptyBuffer()
-//	s.DefaultChar = " "
-//	return s
-//}
+func NewScreen(height int, width int) *Screen {
+	s := new(Screen)
+	s.Height = height
+	s.Width = width
+	s.EmptyBuffer()
+	s.DefaultChar = " "
+	return s
+}
 
 /*
 Create a new screen.
@@ -48,13 +47,13 @@ Uses the terminal's dimensions for the screen's dimensions.
 Returns:
 	*Screen - a pointer to the screen representation
 */
-func NewScreen() *Screen {
-	s = new(Screen)
-	s.Width, s.Height, _ = terminal.GetSize(1) // fd = 1 is standard out
-	s.Buffer = new([s.Height][s.Width]string)
-	s.DefaultChar = " "
-	return s
-}
+//func NewScreen() *Screen {
+//	s = new(Screen)
+//	s.Width, s.Height, _ = terminal.GetSize(1) // fd = 1 is standard out
+//	s.Buffer = new([s.Height][s.Width]string)
+//	s.DefaultChar = " "
+//	return s
+//}
 
 /*
 Add a character to the screen at the specified x (row) and y (column) coordinates.
@@ -134,9 +133,9 @@ Returns:
 	int - the number of columns on the screen
 	os.Error - the error if the function failed, nil if successful
 */
-func GetScreenDimensions() (int, int, os.Error) {
-	return terminal.GetSize(1)
-}
+//func GetScreenDimensions() (int, int, os.Error) {
+//	return terminal.GetSize(1)
+//}
 
 /*
 Set the standard in and out screens to raw mode.
@@ -144,13 +143,13 @@ Set the standard in and out screens to raw mode.
 Returns:
 	func() os.Error - a function used for restoring the screens to their pre-raw mode
 */
-func MakeRaw() func() {
-	oldState, err := terminal.MakeRaw(0)
-	if err != nil {
-	        panic(err)
-	}
-	reset := func() {
-		defer terminal.Restore(0, oldState)
-	}
-	return reset
-}
+//func MakeRaw() func() {
+//	oldState, err := terminal.MakeRaw(0)
+//	if err != nil {
+//	        panic(err)
+//	}
+//	reset := func() {
+//		defer terminal.Restore(0, oldState)
+//	}
+//	return reset
+//}
