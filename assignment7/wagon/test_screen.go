@@ -1,20 +1,27 @@
 package main
 
 import "./screen"
-import "exec"
+import ( "exec"; "os" )
 
 func main() {
 
-	screen.PrepScreenForRaw()
-	raw := exec.Command("stty", "raw")
-	err := raw.Run()
-	if err != nil { println(err.String()) }
+	os.Exec("stty", []string{"raw"}, os.Environ() )
 
-	s := screen.NewScreen(64, 82)
-	for i := 0; i < 20; i++ {
-		s.Add("A", 10+i, 10+i)
-		s.Print()
-		sleep := exec.Command("sleep", "2")
-		sleep.Run()
+	row, col, err := screen.GetScreenDimensions()
+	println(row)
+	println(col)
+
+	if err == nil {
+		s := screen.NewScreen(row, col)
+		reset, err := screen.PrepScreenForRaw()
+		if err != nil {
+			for i := 0; i < 20; i++ {
+				s.Add("A", 10+i, 10+1)
+				s.Print()
+				sleep := exec.Command("sleep", "1")
+				sleep.Run()
+			}
+			reset()
+		}
 	}
 }

@@ -137,6 +137,7 @@ Returns:
 */
 func GetScreenDimensions() (int, int, os.Error) {
 	c := exec.Command("stty", "size")
+	c.Env = os.Environ()
 	raw_out, err := c.Output()
 	if err == nil {
 		out := (string)(raw_out)
@@ -158,6 +159,7 @@ Returns:
 */
 func PrepScreenForRaw() (func() os.Error, os.Error) {
 	c := exec.Command("stty", "-g")
+	c.Env = os.Environ()
 	raw_out, err := c.Output()
 	if err == nil {
 		out := (string)(raw_out)
