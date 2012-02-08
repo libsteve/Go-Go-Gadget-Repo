@@ -1,0 +1,5 @@
+#!/bin/sh
+settings=`stty -g`
+stty raw
+./wag
+stty $settings
