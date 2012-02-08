@@ -4,6 +4,16 @@ A package to represent a collection of wheels as a wagon.
 package wagon
 
 /*
+Constant direction values.
+*/
+const (
+	UP		= 0
+	DOWN	= 1
+	LEFT	= 2
+	RIGHT	= 3
+)
+
+/*
 The Wheel Struct.
 
 Has:
@@ -61,11 +71,11 @@ Parameters:
 Returns:
 	*Wheel - a pointer to a wheel with the given value
 */
-func NewWheel(value string) *Wheel {
-	w = new(Wheel)
-	w.Value = value
-	return w
-}
+//func NewWheel(value string) *Wheel {
+//	w = new(Wheel)
+//	w.Value = value
+//	return w
+//}
 
 /*
 Create a new Wagon train.
@@ -95,5 +105,56 @@ func (w *Wagon) Add(wheel *Wheel) {
 		w.Tail.Next = wheel
 		wheel.Prev = w.Tail
 		w.Tail = wheel
+	}
+}
+
+/*
+Move the wagon either forward or backward.
+
+Parameters:
+	start - the start wheel, either the Head or the Tail of the wagon
+	direction - the direction to move the start wheel. either UP, DOWN, LEFT, or RIGHT
+
+Post:
+	all the wheels within the wagon will move into the previous wheel's place
+*/
+func (w *Wagon) Move(start *Wheel, direction int) {
+	var current *Wheel
+	var next *Wheel
+	good := true
+
+	if start == w.Head {
+		current = w.Tail
+		var current *Wheel
+		for good {
+			if current.Prev == nil { good = false; break }
+			next = current.Prev
+			current.X = next.X
+			current.Y = next.Y
+			current = next
+		}	
+	} else if start == w.Tail {
+		current = w.Head
+		for good {
+			if current.Next == nil { good = false; break }
+			next = current.Next
+			current.X = next.X
+			current.Y = next.Y
+			current = next
+		}	
+	} else {
+		// do nothing...
+		return
+	}
+
+	switch direction {
+	case UP:
+		start.Y += 1
+	case DOWN:
+		start.Y -= 1
+	case LEFT:
+		start.X += 1
+	case RIGHT:
+		start.X -= 1
 	}
 }

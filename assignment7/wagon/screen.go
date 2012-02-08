@@ -3,8 +3,8 @@ A package to represent a grid-based screen of certain integer height and width.
 */
 package screen
 
-import ( "os"; "strconv"; "strings"; "exec" )
-//import "terminal"
+import "./terminal"
+import "bufio"
 
 /*
 A Screen Struct to represent a screen with height and width.
@@ -32,30 +32,29 @@ Parameters:
 Returns:
 	*Screen - a pointer to the screen representation
 */
-func NewScreen(height int, width int) *Screen {
-	s := new(Screen)
-	s.Height = height
-	s.Width = width
-	s.EmptyBuffer()
-	s.DefaultChar = " "
-	return s
-}
+//func NewScreen(height int, width int) *Screen {
+//	s := new(Screen)
+//	s.Height = height
+//	s.Width = width
+//	s.EmptyBuffer()
+//	s.DefaultChar = " "
+//	return s
+//}
 
 /*
 Create a new screen.
 Uses the terminal's dimensions for the screen's dimensions.
-Terminal only exists on the weekly build of GO.
 
 Returns:
 	*Screen - a pointer to the screen representation
 */
-//func NewScreen() *Screen {
-//	s = new(Screen)
-//	s.Width, s.Height = terminal.GetSize(1) // fd = 1 is standard out
-//	s.Buffer = new([s.Height][s.Width]string)
-//	s.DefaultChar = " "
-//	return s
-//}
+func NewScreen() *Screen {
+	s = new(Screen)
+	s.Width, s.Height, _ = terminal.GetSize(1) // fd = 1 is standard out
+	s.Buffer = new([s.Height][s.Width]string)
+	s.DefaultChar = " "
+	return s
+}
 
 /*
 Add a character to the screen at the specified x (row) and y (column) coordinates.
@@ -74,7 +73,7 @@ Returns:
 Pre:
 	char - the character must be a single character. will return false otherwise.
 */
-func (s *Screen) Add(char string, x int, y int) bool{
+func (s *Screen) Add(char string, x, y int) bool{
 	if s.Buffer[x][y] == "" {
 		if len(char) > 1 { return false }
 		s.Buffer[x][y] = char
@@ -116,7 +115,7 @@ Parameters:
 Post:
 	s.Buffer - the screen's buffer is reset
 */
-func (s *Screen) ChangeScreenSize(height int, width int) {
+func (s *Screen) ChangeScreenSize(height, width int) {
 	s.Height = height
 	s.Width = width
 	s.EmptyBuffer()
@@ -136,38 +135,22 @@ Returns:
 	os.Error - the error if the function failed, nil if successful
 */
 func GetScreenDimensions() (int, int, os.Error) {
-	c := exec.Command("stty", "size")
-	c.Env = os.Environ()
-	raw_out, err := c.Output()
-	if err == nil {
-		out := (string)(raw_out)
-		nums := strings.Split(out, " ")
-		row, err1 := strconv.Atoi(nums[0])
-		col, err2 := strconv.Atoi(nums[1])
-		if err1 != nil || err2 != nil { return row, col, nil }
-		return 0, 0, os.NewError("Convertion Error")
-	}
-	return 0, 0, err
+	return terminal.GetSize(1)
 }
 
 /*
-Prepare the standard in and out screens for raw mode.
+Set the standard in and out screens to raw mode.
 
 Returns:
 	func() os.Error - a function used for restoring the screens to their pre-raw mode
-	os.Error - the error if the function failed, nil if successful
 */
-func PrepScreenForRaw() (func() os.Error, os.Error) {
-	c := exec.Command("stty", "-g")
-	c.Env = os.Environ()
-	raw_out, err := c.Output()
-	if err == nil {
-		out := (string)(raw_out)
-		reset_func := func() os.Error {
-			c = exec.Command("stty", out)
-			return c.Run()
-		}
-		return reset_func, nil
+func MakeScreenRaw() func() {
+	oldState, err := terminal.MakeRaw(0)
+	if err != nil {
+	        panic(err)
 	}
-	return func() os.Error { return err }, err
+	reset := func() {
+		defer terminal.Restore(0, oldState)
+	}
+	return reset
 }
