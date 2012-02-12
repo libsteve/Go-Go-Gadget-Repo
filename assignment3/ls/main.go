@@ -32,8 +32,15 @@ func main() {
 	t = flag.Bool("t", false, "sort files by modification time")
 	flag.Parse()
 
+	args := flag.Args()
+	if len(args) == 0 { args = []string{ "./" } }
+	defer func() {
+		if r := recover(); r != nil { fmt.Fprintln(os.Stderr, "Invalid Arguments") }
+	}()
+
 	temp := template.Must(template.New("ls").Parse("{{.Mode}} {{printf `%3d` .Nlink}} {{.Uid}}  {{.Gid}}  {{printf `%7d` .Size}} {{.Mtime}}  {{.Name}}\n"))
-	for _, arg := range flag.Args(){
+
+	for _, arg := range args {
 		if data, error := ls.Ls(arg, *R, *t) ; error == nil{
 			path := data[0][0].Name
 			if strings.HasSuffix(path, "/"){
