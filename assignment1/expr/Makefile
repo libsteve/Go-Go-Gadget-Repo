@@ -1,9 +1,9 @@
 include $(GOROOT)/src/MAKE.inc
 
-TARG=expr
-GOFILES=\
-	expreval.go\
-	expr.go\
+all:	main.go expr.go
+	6g expr.go
+	6g main.go
+	6l -o expr main.6
 
 include $(GOROOT)/src/Make.cmd
 
