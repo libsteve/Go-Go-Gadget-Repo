@@ -3,8 +3,8 @@
 by Kristen Mills and Steve Brunwasser
 
 ##Includes:
-	expr.go
- 	expreval.go
+	main.go
+ 	expr.go
 	Makefile
 
 ##About

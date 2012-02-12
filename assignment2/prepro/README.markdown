@@ -6,8 +6,8 @@ by Kristen Mills and Steve Brunwasser
 
 	doc.go
 	index.html
+	main.go
 	pp.go
-	prepro.go
 	Makefile
 
 ##About
