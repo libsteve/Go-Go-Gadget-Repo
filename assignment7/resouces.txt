@@ -1,2 +1,21 @@
+##
+# Early attempts to control terminal io
 http://en.wikipedia.org/wiki/File_descriptor
 http://weekly.golang.org/pkg/exp/terminal/
+
+##
+# Getting screen size
+http://www.darkcoding.net/software/pretty-command-line-console-output-on-unix-in-python-and-go-lang/
+http://groups.google.com/group/golang-nuts/browse_thread/thread/f1de2938f9922fd4
+http://go.pastie.org/813153
+http://golang.org/pkg/unsafe/
+http://golang.org/pkg/syscall/#Syscall
+
+##
+# os.Environ() variables
+http://groups.google.com/group/golang-dev/browse_thread/thread/6e8c2d18bc5547fc
+
+##
+# ANSI Escape Codes:
+http://en.wikipedia.org/wiki/ANSI_escape_code
+http://ascii-table.com/ansi-escape-sequences.php
