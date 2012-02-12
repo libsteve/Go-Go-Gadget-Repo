@@ -3,42 +3,24 @@ A package to represent a grid-based screen of certain integer height and width.
 */
 package screen
 
-import ( "os"; "strconv" )
-//import ( "./terminal"; "bufio" )
+import ( "os"; "exec"; "strconv"; "syscall"; "unsafe" )
 
 /*
 A Screen Struct to represent a screen with height and width.
 
 Variables:
-	Height - the number of rows of the screen
-	Width - the number of columns of the screen
-	Buffer - the cahracter buffer to print to the screen
+	height - the number of rows of the screen
+	width - the number of columns of the screen
+	buffer - the cahracter buffer to print to the screen
+	on_screen - the cahracter buffer representing what is on the screen
 	DefaultChar - the default character to draw to the screen if the buffer at that position is empty
 */
 type Screen struct {
-	Height int
-	Width int
-	Buffer [][]string
+	height int
+	width int
+	buffer [][]string
+	on_screen [][]string
 	DefaultChar string
-}
-
-/*
-Create a new screen.
-
-Parameters:
-	height - the integer height (rows) of the screen
-	width - the integer width (columns) of the screen
-
-Returns:
-	*Screen - a pointer to the screen representation
-*/
-func NewScreen(height int, width int) *Screen {
-	s := new(Screen)
-	s.Height = height
-	s.Width = width
-	s.EmptyBuffer()
-	s.DefaultChar = " "
-	return s
 }
 
 /*
@@ -48,38 +30,54 @@ Uses the terminal's dimensions for the screen's dimensions.
 Returns:
 	*Screen - a pointer to the screen representation
 */
-//func NewScreen() *Screen {
-//	s = new(Screen)
-//	s.Width, s.Height, _ = terminal.GetSize(1) // fd = 1 is standard out
-//	s.Buffer = new([s.Height][s.Width]string)
-//	s.DefaultChar = " "
-//	return s
-//}
+func NewScreen() *Screen {
+	s := new(Screen)
+	s.height , s.width = screen_dimesnions()
+	s.empty_buff()
+	s.empty_screen()
+	s.DefaultChar = " "
+	return s
+}
 
 /*
-Add a character to the screen at the specified x (row) and y (column) coordinates.
+Add a character to the screen at the specified row and column.
 
 Method for:
 	*Screen - a pointer to a screen struct
 
 Parameters:
-	char - the character to add to the screen
-	x - the x coordinate (the row) to add the cahracter to
-	y - the y coordinate (the column) to add the character to 
+	chars - the characters to add to the screen (in string form)
+	x - the x coordinate (column) to start adding the character to
+	y - the y coordinate (row) to add the cahracters to
 
 Returns:
-	bool - true if the character was added, false otherwise
-
-Pre:
-	char - the character must be a single character. will return false otherwise.
+	bool - true if successful, false if attempting to write out-of-bounds
 */
-func (s *Screen) Add(char string, x, y int) bool{
-	if s.Buffer[x][y] == "" {
-		if len(char) > 1 { return false }
-		s.Buffer[x][y] = char
-		return true
+func (s *Screen) Add(chars string, x, y int) bool {
+	if y > s.height { return false }
+	for i, ch := range chars {
+		col := x + i
+		if col > s.width { return false }
+		s.buffer[y][col] = (string)(ch)
 	}
-	return false
+	return true
+}
+
+/*
+Hides the cursor from the screen.
+Always call ShowCursor() when you are done.
+*/
+func HideCursor() {
+	os.Stdout.Write(([]byte)("\033[?25l"))
+	os.Stdout.Sync()
+}
+
+/*
+Shows the cursor on the screen.
+*/
+func ShowCursor() {
+	os.Stdout.Write(([]byte)("\033[?25h"))
+	os.Stdout.Sync()
 }
 
 /*
@@ -89,17 +87,45 @@ Method for:
 	*Screen - a pointer to a screen struct
 	
 Post:
-	s.Buffer - the screen's buffer is reset
+	s.buffer - the screen's buffer is reset
+	s.on_screen - the on screen buffer matches what is on screen
 */
 func (s *Screen) Print() {
-	for r, line_arr := range s.Buffer {
+	for r, line_arr := range s.buffer {
 		for c, char := range line_arr {
-			if char == "" { char = s.DefaultChar }
-			os.Stdout.Write(([]byte)("\033["+strconv.Itoa(r)+";"+strconv.Itoa(c)+"H"+char))
-			os.Stdout.Sync()		
+			if char != s.on_screen[r][c] {
+				if char == "" { char = s.DefaultChar }
+				s.on_screen[r][c] = char
+				result := "\033[" + strconv.Itoa(r) + ";" + strconv.Itoa(c) + "H" + char
+				os.Stdout.Write(([]byte)(result))
+				os.Stdout.Sync()
+			}
 		}
 	}
-	s.EmptyBuffer()
+	s.empty_buff()
+}
+
+/*
+Clear all of the characters from the screen buffer and standard out.
+
+Method for:
+	*Screen - a pointer to a screen struct
+	
+Post:
+	s.buffer - the screen's buffer is reset
+	s.on_screen - the on screen buffer is reset
+*/
+func (s *Screen) Clear() {
+	s.empty_buff()
+	s.empty_screen()
+	for r, line_arr := range s.on_screen {
+		for c, char := range line_arr {
+			if char == "" { char = s.DefaultChar }
+			result := "\033[" + strconv.Itoa(r) + ";" + strconv.Itoa(c) + "H" + char
+			os.Stdout.Write(([]byte)(result))
+			os.Stdout.Sync()
+		}
+	}
 }
 
 /*
@@ -113,17 +139,62 @@ Parameters:
 	width - the new integer width (columns) of the screen
 
 Post:
-	s.Buffer - the screen's buffer is reset
+	s.buffer - the screen's buffer is reset
+	s.on_screen - the on-screen buffer is reset
 */
-func (s *Screen) ChangeScreenSize(height, width int) {
-	s.Height = height
-	s.Width = width
-	s.EmptyBuffer()
+func (s *Screen) UpdateScreenSize() {
+	row, col := screen_dimesnions()
+	if row != s.height || col != s.width {
+		s.height = row
+		s.width = col
+		s.empty_buff()
+		s.empty_screen()
+		s.Clear()
+	}
 }
 
-func (s *Screen) EmptyBuffer() {
-	s.Buffer = make([][]string, s.Height)
-	for i, _ := range s.Buffer { s.Buffer[i] = make([]string, s.Width) }
+/*
+Get the dimensions of the screen.
+
+Method for:
+	*Screen - a pointer to a screen struct
+
+Returns:
+	height - the integer height (rows) of the screen
+	width - the integer width (columns) of the screen
+*/
+func (s *Screen) GetDimensions() (int, int) {
+	return s.height, s.width
+}
+
+/*
+Empty the screen's buffer.
+*/
+func (s *Screen) empty_buff() {
+	s.buffer = make([][]string, s.height+1)
+	for i, _ := range s.buffer { s.buffer[i] = make([]string, s.width+1) }
+}
+
+/*
+Empty the screen.
+*/
+func (s *Screen) empty_screen() {
+	s.on_screen = make([][]string, s.height+1)
+	for i, _ := range s.on_screen { s.on_screen[i] = make([]string, s.width+1) }
+}
+
+/*
+Set up a command to use os standard in/out/err
+*/
+func set_exec(c *exec.Cmd) {
+	c.Stdout = os.Stdout
+	c.Stdin = os.Stdin
+	c.Stderr = os.Stderr
+}
+
+type winsize struct { 
+    ws_row, ws_col uint16 
+    ws_xpixel, ws_ypixel uint16 
 }
 
 /*
@@ -131,29 +202,42 @@ Get the dimensions of the standard out screen.
 
 Returns:
 	int - the number of rows on the screen
-	int - the number of columns on the screen
-	os.Error - the error if the function failed, nil if successful
+	int - the number of columns on the screen\
 */
-//func GetScreenDimensions() (int, int, os.Error) {
-//	return terminal.GetSize(1)
-//}
+func screen_dimesnions() (int, int) {
+	ws := winsize{} 
+    syscall.Syscall(syscall.SYS_IOCTL, 
+        uintptr(0), uintptr(syscall.TIOCGWINSZ), 
+        uintptr(unsafe.Pointer(&ws))) 
+	return (int)(ws.ws_row), (int)(ws.ws_col)
+}
+
+/*
+Reset the standard in and out screens from raw mode.
+
+Pre:
+	MakeRaw() is called, the screen is set to raw mode.
+*/
+var ResetRaw func()
 
 /*
 Set the standard in and out screens to raw mode.
+Always call ResetRaw() when you are done.
 
-Returns:
-	func() os.Error - a function used for restoring the screens to their pre-raw mode
+Post:
+	ResetRaw() will reset standard in and out to pre-raw settings
 */
-//func MakeRaw() func() {
-//	oldState, err := terminal.MakeRaw(0)
-//	if err != nil {
-//	        panic(err)
-//	}
-//	reset := func() {
-//		defer terminal.Restore(0, oldState)
-//	}
-//	return reset
-//}
+func MakeRaw() {
+	c := exec.Command("stty", "raw")
+	set_exec(c)
+	c.Run()
+
+	ResetRaw = func() {
+		c := exec.Command("stty", "-raw")
+		set_exec(c)
+		c.Run()
+	}
+}
 
 /*
 Read one character from standard input.

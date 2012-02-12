@@ -4,6 +4,33 @@ A package to represent a collection of wheels as a wagon.
 package wagon
 
 /*
+An interfaces for anything that the wagon is going to write to.
+*/
+type Screen interface{
+	/*
+	Add the character to the string at the goven coordinates.
+
+	Parameters:
+		char - the character to add
+		x - the x position to add to (the column)
+		y - the y position to add to (the row)
+
+	Returns:
+		bool - true if successful, false otherwise
+	*/
+	Add(char string, x, y int) bool
+
+	/*
+	Get the dimensions of the screen.
+
+	Returns:
+		height - the integer height (rows) of the screen
+		width - the integer width (columns) of the screen
+	*/
+	GetDimensions() (int, int) 
+}
+
+/*
 Constant direction values.
 */
 const (
@@ -11,6 +38,8 @@ const (
 	DOWN	= 1
 	LEFT	= 2
 	RIGHT	= 3
+	HEAD 	= 4
+	TAIL 	= 5
 )
 
 /*
@@ -34,13 +63,16 @@ type Wheel struct {
 /*
 The Wagon Struct.
 
-HasL
+Has:
 	Head - the beginning of the wagon train
 	Tail - the end of the wagon train
+	height_bound - the maximum height of the wagon
+	width_bound - the maximum width of the wagon
 */
 type Wagon struct {
 	Head *Wheel
 	Tail *Wheel
+	S Screen
 }
 
 /*
@@ -63,106 +95,61 @@ func NewWheel(value string, x int, y int) *Wheel {
 }
 
 /*
-Create a new Wheel.
+Create a new Wagon train.
 
 Parameters:
-	value - the value of the wheel
-
-Returns:
-	*Wheel - a pointer to a wheel with the given value
-*/
-//func NewWheel(value string) *Wheel {
-//	w = new(Wheel)
-//	w.Value = value
-//	return w
-//}
-
-/*
-Create a new Wagon train.
+	s - a pointer to some Screen interface
 
 Returns:
 	*Wagon - a pointer to a fresh new wagon train.
 */
-func NewWagon() *Wagon {
+func NewWagon(s Screen) *Wagon {
 	w := new(Wagon)
+	w.S = s
 	return w
 }
 
 /*
-Add a wheel to the wagon train.
+Add a wheel to the head or tail of the wagon train.
 
 Method for:
 	*Wagon - a pointer to the wagon to add a wheel to
 
 Parameters:
+	dest - either HEAD or TAIL, depending on where the wheel is to be added
 	wheel - a pointer to the wheel to add to the wagon
 */
-func (w *Wagon) AddToHead(wheel *Wheel) {
-	w.Add(w.Head, wheel)
-}
-
-/*
-Add a wheel to the wagon train.
-
-Method for:
-	*Wagon - a pointer to the wagon to add a wheel to
-
-Parameters:
-	wheel - a pointer to the wheel to add to the wagon
-*/
-func (w *Wagon) Add(dest *Wheel, wheel *Wheel) {
-	if w.Tail == nil {
+func (w *Wagon) Add(dest int, wheel *Wheel) {
+	if w.Tail == nil && (dest == HEAD || dest == TAIL) {
 		w.Head = wheel
 		w.Tail = wheel
 	}
-	if dest == w.Head {
-		w.Tail.Next = wheel
-		wheel.Prev = w.Tail
-		w.Tail = wheel
-	} else if dest == w.Tail {
+	if dest == HEAD {
 		w.Head.Prev = wheel
 		wheel.Next = w.Head
 		w.Head = wheel
+	} else if dest == TAIL {
+		w.Tail.Next = wheel
+		wheel.Prev = w.Tail
+		w.Tail = wheel
 	}
 
 	
 }
 
 /*
-An interfaces for anything that the wagon is going to write to.
-*/
-type Screen interface{
-	/*
-	Add the character to the string at the goven coordinates.
-
-	Parameters:
-		char - the character to add
-		x - the x position to add to (the column)
-		y - the y position to add to (the row)
-
-	Returns:
-		bool - true if successful, false otherwise
-	*/
-	Add(char string, x, y int) bool
-}
-
-/*
 Write the wagon to the given screen.
-
-Parameters:
-	Screen - the screen writer to add to
 
 Post:
 	The wagon data is given to the screen
 */
-func (w *Wagon) AddToScreen(s Screen) {
+func (w *Wagon) AddToScreen() {
 	var current *Wheel
-	good := true
 
 	current = w.Head
-	for good {
-		s.Add(current.Value, current.X, current.Y)
-		if current.Next == nil { good = false; break }
+	for {
+		w.S.Add(current.Value, current.X, current.Y)
+		if current.Next == nil { break }
 		current = current.Next
 	}
 }
@@ -171,49 +158,67 @@ func (w *Wagon) AddToScreen(s Screen) {
 Move the wagon either forward or backward.
 
 Parameters:
-	start - the start wheel, either the Head or the Tail of the wagon
+	start - the start wheel, either HEAD or TAIL, for the head or tail of the wagon
 	direction - the direction to move the start wheel. either UP, DOWN, LEFT, or RIGHT
 
 Post:
 	all the wheels within the wagon will move into the previous wheel's place
 */
-func (w *Wagon) Move(start *Wheel, direction int) {
+func (w *Wagon) Move(start int, direction int) {
+	var final *Wheel
 	var current *Wheel
 	var next *Wheel
-	good := true
+	var next_wheel func() *Wheel
+	var result_x, result_y int
 
-	if start == w.Head {
+	// set up variables
+	switch start {
+	case HEAD:
+		final = w.Head
+		result_x, result_y = dest_result(final, direction)
 		current = w.Tail
-		var current *Wheel
-		for good {
-			if current.Prev == nil { good = false; break }
-			next = current.Prev
-			current.X = next.X
-			current.Y = next.Y
-			current = next
-		}	
-	} else if start == w.Tail {
+		next_wheel = func() *Wheel { return current.Prev }
+	case TAIL:
+		final = w.Tail
+		result_x, result_y = dest_result(final, direction)
 		current = w.Head
-		for good {
-			if current.Next == nil { good = false; break }
-			next = current.Next
-			current.X = next.X
-			current.Y = next.Y
-			current = next
-		}	
-	} else {
-		// do nothing...
+		next_wheel = func() *Wheel { return current.Next }
+	default:
+		// do nothing
 		return
 	}
 
+	// check bounds
+	max_height, max_width := w.S.GetDimensions()
+	if (result_x > max_width || result_y > max_height) || (result_x < 1 || result_y < 1) {
+		return
+	}
+
+	// move the values throughout the linked-list
+	for current != final {
+		next = next_wheel()
+		current.X, current.Y = next.X, next.Y
+		current = next
+	}
+
+	final.X, final.Y = result_x, result_y
+	
+}
+
+/*
+Get the resulting x, y coordinates from the specified movement of the given wheel
+*/
+func dest_result(w *Wheel, direction int) (int, int) {
+	x, y := w.X, w.Y
 	switch direction {
 	case UP:
-		start.Y += 1
+		y -= 1
 	case DOWN:
-		start.Y -= 1
+		y += 1
 	case LEFT:
-		start.X += 1
+		x -= 1
 	case RIGHT:
-		start.X -= 1
+		x += 1
 	}
+	return x, y
 }

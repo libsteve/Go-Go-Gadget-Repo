@@ -12,7 +12,6 @@ Includes
 * wagon.go
 * screen.go
 * README.md
-* wagon
 
 
 About
@@ -36,7 +35,7 @@ To build and compile:
 
 To run the program:
 
-	$ ./wagon
+	$ ./wag
 
 To move the head of the wagon, press:
 
@@ -44,6 +43,11 @@ To move the head of the wagon, press:
 	d 	-	move down
 	l 	-	move left
 	r 	-	move right
+
+	up arrow 	-	move up
+	down arrow 	-	move down
+	left arrow 	-	move left
+	right arrow	-	move right
 
 To move the tail of the wagon, press:
 
@@ -59,4 +63,5 @@ To add a wheel to the wagon train, press:
 
 To quit the program, press:
 
-	q 	-	quit the program
+	q 		-	quit the program
+	ESC-ESC	-	quit the program
