@@ -1,10 +1,35 @@
 /*
 A package to represent a collection of wheels as a wagon.
+
+Usage:
+
+Create a new wagon to hold wheels. Give the wagon a Screen implementation.
+	w := wagon.NewWagon(s)
+
+Create a new wheel. Give it a character for a value and an (x, y) position.
+	x_pos, y_pos := 1, 1
+	wheel := wagon.NewWheel("*", x_pos, y_pos)
+
+Add a wheel to a wagon to either the wagon's head or tail.
+	wheel_1 := wagon.NewWheel("*", 1, 1)
+	wheel_2 := wagon.NewWheel("&", 2, 2)
+	w.Add(wagon.HEAD, wheel_1)
+	w.Add(wagon.TAIL, wheel_2)
+
+Add the wagon to the Screen implementation.
+	w.AddToScreen()
+
+Move either the head or the tail of the wagon either up, down, left, or right.
+The wagon will only move as long as it does not move past the bounds of the screen.
+	w.Move(wagon.HEAD, wagon.UP)
+	w.Move(wagon.HEAD, wagon.DOWN)
+	w.Move(wagon.TAIL, wagon.LEFT)
+	w.Move(wagon.TAIL, wagon.RIGHT)
 */
 package wagon
 
 /*
-An interfaces for anything that the wagon is going to write to.
+An interface for anything that the wagon is going to write to.
 */
 type Screen interface{
 	/*

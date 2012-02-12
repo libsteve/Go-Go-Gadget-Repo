@@ -35,7 +35,11 @@ To build and compile:
 
 To run the program:
 
-	$ ./wag
+	$ ./wag [-b <char>]
+
+Flags:
+
+	-b <char>	-	supply a background character (must be a single character)
 
 To move the head of the wagon, press:
 

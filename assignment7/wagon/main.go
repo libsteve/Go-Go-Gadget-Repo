@@ -1,13 +1,35 @@
 package main
 
-import ( "./wagon"; "./screen" )
+import ( "./wagon"; "./screen"; "flag" )
 
 func main() {
 	s := screen.NewScreen()
-	s.DefaultChar = "`"
+	w := wagon.NewWagon(s)
+
+	var d *string
+	d = flag.String("b", " ", "set the background filler character")
+	flag.Parse()
+	if len(*d) == 1 { 
+		s.DefaultChar = *d
+	} else { 
+		println("Only be one character allowed.")
+		return 
+	}
+
 	screen.MakeRaw()
+	screen.HideCursor()
 	s.Clear()
 
+	run(w, s)
+
+	screen.ResetRaw()
+	screen.ShowCursor()
+}
+
+func run(w *wagon.Wagon, s *screen.Screen) {
+	HEAD, TAIL := wagon.HEAD, wagon.TAIL
+
+	btm_y, btm_x := s.GetDimensions()
 
 	start := 'a' - 1
 	next_char := func() string {
@@ -17,16 +39,6 @@ func main() {
 		start += 1
 		return (string)(start)
 	}
-
-
-	w := wagon.NewWagon(s)
-
-	HEAD, TAIL := wagon.HEAD, wagon.TAIL
-
-	btm_y, btm_x := s.GetDimensions()
-
-	screen.HideCursor()
-
 
 	w.Add(HEAD, wagon.NewWheel(next_char(), 5, 5))
 	w.Add(TAIL, wagon.NewWheel(next_char(), btm_x - 5, btm_y - 5))
@@ -76,9 +88,5 @@ func main() {
 		case "A":
 			w.Add(TAIL, wagon.NewWheel(next_char(), btm_x - 2, btm_y - 2))
 		}
-
 	}
-
-	screen.ResetRaw()
-	screen.ShowCursor()
 }

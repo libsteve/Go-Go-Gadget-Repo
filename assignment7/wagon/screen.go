@@ -1,5 +1,48 @@
 /*
 A package to represent a grid-based screen of certain integer height and width.
+
+Usage:
+
+Create a new screen
+	s := screen.NewScreen()
+
+You can set the screen to raw mode.
+	screen.MakeRaw()
+
+Be sure to reset raw mode.
+	screen.ResetRaw()
+
+You can hide the cursor.
+	screen.HideCursor()
+
+Be sure to un-hide the cursor.
+	screen.ShowCursor()
+
+Get the current dimensions of the screen.
+	amount_of_rows, amount_of_columns := s.GetDimensions()
+
+Check for changes in the terminal size and update the screen accordingly.
+	s.UpdateScreenSize()
+
+Screen positions are measured in (x, y) pairs starting from (0, 0) in the top left corner.
+Add a character or a string to a given point on the screen.
+	x_pos, y_pos := 1, 1
+	s.Add("string to add", x_pos, y_pos)
+
+Clear the screen of all characters and replace them with the default character.
+	s.Clear()
+
+You can set the default character by changing it's variable.
+Make sure that the default cahracter is a single character.
+	s.DefaultChar = "-"
+
+Printing all characters to the screen removes them from the character buffer.
+Be sure to re-add characters to the screen after printing. 
+Print all the added characters to the terminal screen.
+	s.Print()
+
+Read a single character (as a string) from standard in.
+	char := screen.ReadChar()
 */
 package screen
 
