@@ -55,16 +55,35 @@ type Screen interface{
 	GetDimensions() (int, int) 
 }
 
+type (
+	// a type for directionality of the movement of the wagon
+	Direction int
+
+	// a type for position of the wheel on the wagon to move
+	Position int
+)
+
 /*
 Constant direction values.
 */
 const (
-	UP		= 0
-	DOWN	= 1
-	LEFT	= 2
-	RIGHT	= 3
-	HEAD 	= 4
-	TAIL 	= 5
+	// move the wagon up
+	UP		= Direction(iota)
+
+	// move the wagon down
+	DOWN
+
+	// move the wagon left
+	LEFT
+
+	// move the wagon right
+	RIGHT
+
+	// the head of the wagon
+	HEAD 	= Position(iota)
+
+	// the tail of the wagon
+	TAIL
 )
 
 /*
@@ -144,7 +163,7 @@ Parameters:
 	dest - either HEAD or TAIL, depending on where the wheel is to be added
 	wheel - a pointer to the wheel to add to the wagon
 */
-func (w *Wagon) Add(dest int, wheel *Wheel) {
+func (w *Wagon) Add(dest Position, wheel *Wheel) {
 	if w.Tail == nil && (dest == HEAD || dest == TAIL) {
 		w.Head = wheel
 		w.Tail = wheel
@@ -189,7 +208,7 @@ Parameters:
 Post:
 	all the wheels within the wagon will move into the previous wheel's place
 */
-func (w *Wagon) Move(start int, direction int) {
+func (w *Wagon) Move(start Position, direction Direction) {
 	var final *Wheel
 	var current *Wheel
 	var next *Wheel
@@ -233,7 +252,7 @@ func (w *Wagon) Move(start int, direction int) {
 /*
 Get the resulting x, y coordinates from the specified movement of the given wheel
 */
-func dest_result(w *Wheel, direction int) (int, int) {
+func dest_result(w *Wheel, direction Direction) (int, int) {
 	x, y := w.X, w.Y
 	switch direction {
 	case UP:
