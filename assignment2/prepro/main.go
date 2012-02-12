@@ -79,6 +79,10 @@ func main() {
 	if *h {
 		http.HandleFunc("/", handler)
 		http.HandleFunc("/pp", handlerInput)
+		first := "Please navigate your web-browser to http://localhost:6060/\n"
+		second := "Press Ctrl+C to quit the server"
+		write := []byte(first + second)
+		os.Stdout.Write(write)
 		http.ListenAndServe(":6060", nil)
 	} else if flag.Arg(0) == "-" || flag.NArg() == 0{
 		sin := bufio.NewReader(os.Stdin)
