@@ -31,7 +31,7 @@ type Igame interface {
 	Returns:
 		bool - true if the game is finished, flase otherwise
 	*/
-	Finished() bool
+	Finished() (bool, ttt.Player)
 
 	/*
 	Get the winner of the game.
