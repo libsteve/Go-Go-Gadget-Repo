@@ -1,18 +1,17 @@
 package ttt
 
 import "strings"
+import "./igame"
 
 const(
-	noPlayer = (Player)(iota)
+	noPlayer = (games.Player)(iota)
 	player1
 	player2
 
 )
 
-type Player int
-
 type Game struct{
-	Board [3][3]Player
+	Board [3][3]games.Player
 	Choices map[string]int
 }
 
@@ -38,7 +37,7 @@ func newGame() *Game{
 
 func(game *Game) MakeMove(player int, move string){
 	n := game.Choices[strings.ToLower(move)]
-	var p Player
+	var p games.Player
 	switch player{
 		case 0:
 			p = player1
@@ -63,7 +62,7 @@ func (game *Game) CheckMoveValid(move string) bool {
 	return false
 }
 
-func (game *Game) Finished() (bool, Player){
+func (game *Game) Finished() (bool, games.Player){
 	 for _, row := range game.Board{
 	 	for _,square := range row{
 	 		if square == noPlayer{

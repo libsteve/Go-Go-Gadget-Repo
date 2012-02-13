@@ -1,5 +1,7 @@
 package games
 
+type Player int
+
 /*
 An interface for a game.
 */
@@ -30,16 +32,9 @@ type Igame interface {
 
 	Returns:
 		bool - true if the game is finished, flase otherwise
-	*/
-	Finished() (bool, ttt.Player)
 
-	/*
-	Get the winner of the game.
-
-	Returns:
-		int - the player id of the winner, -1 if there is no winner
 	*/
-	Winner() int
+	Finished() (bool, Player)
 
 	/*
 	Get the game board information.
