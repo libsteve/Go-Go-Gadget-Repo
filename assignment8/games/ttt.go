@@ -89,3 +89,23 @@ func (game *Game) Finished() (bool, Player){
 	 }
 	 return false, noPlayer
 }
+
+func (game *Game) getBoard() []string{
+	var array []string
+	for _,rows := range game.Board{
+		str := ""
+		for _,square := range rows{
+			switch square{
+				case noPlayer:
+					str+="  "
+				case player1:
+					str+="x "
+				case player2:
+					str+="o "
+			}
+		}
+		strings.TrimSpace(str)
+		array = append(array,str)
+	}
+	return array
+}
