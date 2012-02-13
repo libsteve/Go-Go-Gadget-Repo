@@ -86,7 +86,7 @@ func (game *Game) Finished() (bool, games.Player){
 	 if game.Board[0][2] == game.Board[1][1] &&game.Board[0][2] == game.Board[2][0]{
 	 	return true, game.Board[0][2]
 	 }
-	 return false, noPlayer
+	 return true, noPlayer
 }
 
 func (game *Game) getBoard() []string{
