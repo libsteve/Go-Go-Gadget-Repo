@@ -41,4 +41,12 @@ type Igame interface {
 	*/
 	Winner() int
 
+	/*
+	Get the game board information.
+
+	Returns:
+		[]string - an arraw of strings where each string represets a row of points and columns of points are separated by a single space
+	*/
+	GetBoard() []string
+
 }

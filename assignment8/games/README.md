@@ -11,6 +11,9 @@ Includes
 * rps.go
 * ttt.go
 * games.go
+* igame.go
+* view.go
+* referee.go
 * README.md
 * Makefile
 
