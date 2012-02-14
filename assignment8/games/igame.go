@@ -2,6 +2,13 @@ package games
 
 type Player int
 
+const(
+	noPlayer = (games.Player)(iota)
+	player1
+	player2
+
+)
+
 /*
 An interface for a game.
 */

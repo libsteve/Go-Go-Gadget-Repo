@@ -3,12 +3,6 @@ package rps
 import "strings"
 import "./igame"
 
-const(
-	noPlayer = (games.Player)(iota)
-	player1
-	player2
-)
-
 type Game struct{
 	player1Move int
 	player2Move int

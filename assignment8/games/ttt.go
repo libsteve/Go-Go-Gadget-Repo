@@ -3,13 +3,6 @@ package ttt
 import "strings"
 import "./igame"
 
-const(
-	noPlayer = (games.Player)(iota)
-	player1
-	player2
-
-)
-
 type Game struct{
 	Board [3][3]games.Player
 	Choices map[string]int
