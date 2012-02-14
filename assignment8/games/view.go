@@ -40,6 +40,7 @@ func (v *View) Loop() os.Error {
 
 		case Show:
 			// display the updated board
+			player_id = req.Args[0]
 			show(player_id, opponent_move)
 
 		case Done:
@@ -61,7 +62,7 @@ func (v *View) Loop() os.Error {
 }
 
 func enable(player_id string) {
-	print(player_id + "'s Move: ")
+	print("Player " + player_id + "'s Move: ")
 }
 
 func get() string {
@@ -71,5 +72,5 @@ func get() string {
 }
 
 func show(player_id string, opponent_move string) {
-	println(player_id + "'s Opponent's Move: " + opponent_move)
+	println("Player " + player_id + "'s Opponent's Move: " + opponent_move)
 }

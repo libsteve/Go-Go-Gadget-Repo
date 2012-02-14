@@ -21,17 +21,18 @@ func NewReferee(game Igame, views ...*View) *Referee {
 Loop throught the Referee's operations.
 */
 func (r *Referee) Loop() os.Error {
-	simultaneous := r.game.IsSimultaneous()
+	var simultaneous bool
+	simultaneous = r.game.IsSimultaneous()
 
 	for {
 
 		var move string
-
-		///////
-		// check to see if the game is finished
-		r.checkFinished()
 		
 		for id, player := range r.players {
+
+			///////
+			// check to see if the game is finished
+			r.checkFinished()
 
 			///////
 			// repeat this until the user's move is valid
@@ -61,11 +62,11 @@ func (r *Referee) Loop() os.Error {
 				}
 			}
 			
-			if simultaneous { r.show() }			
+			if !simultaneous { r.show(id) }			
 
 		}
 
-		if !simultaneous { r.show() }
+		if simultaneous { r.show() }
 
 	}
 
@@ -88,6 +89,7 @@ func (r *Referee) checkFinished() bool {
 				player.Request <- Request{Done, []string{string(Lose)}}
 			}
 		}
+		r.game.Clear()
 		return true
 	}
 	return false
@@ -96,8 +98,13 @@ func (r *Referee) checkFinished() bool {
 /*
 Have all players show the move.
 */
-func (r *Referee) show() {
-	for _, player := range r.players {
-		player.Request <- Request{Show, []string{}}
+func (r *Referee) show(except_ids ...int) {
+	except := make(map[int]bool)
+	for _, other_id := range except_ids { 
+		except[other_id] = true, true
+	}
+	for id, player := range r.players {
+		if _, ok := except[id]; ok { continue }
+		player.Request <- Request{Show, []string{strconv.Itoa(id+1)}}
 	}
 }

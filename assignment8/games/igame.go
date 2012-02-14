@@ -13,9 +13,20 @@ const(
 An interface for a game.
 */
 type Igame interface {
-	
 
+	/*
+	Clear the game board to play a new game.
+	*/
+	Clear()	
+
+	/*
+	Is this game's output supposed to be simultaneous or sequential?
+
+	Returns:
+		bool - true if simultaneous, false if sequential
+	*/
 	IsSimultaneous() bool
+
 	/*
 	Check that the given move is a valid move.
 
