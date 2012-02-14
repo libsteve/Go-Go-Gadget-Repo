@@ -46,6 +46,7 @@ func (r *Referee) Loop() os.Error {
 				// check to see if the player's move is valid
 				response := <- player.Response
 				if move = string(response[0]); r.game.CheckMoveValid(move) {
+					r.game.MakeMove(id,move)
 					break
 				}
 			}

@@ -71,5 +71,5 @@ func get() string {
 }
 
 func show(player_id string, opponent_move string) {
-	println(player_id + "'s' Opponent's Move: " + opponent_move)
+	println(player_id + "'s Opponent's Move: " + opponent_move)
 }

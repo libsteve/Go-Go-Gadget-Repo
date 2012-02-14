@@ -48,7 +48,7 @@ func (game *Game) Finished() (bool, games.Player){
 		return false, games.NO_PLAYER
 	} else if game.player1Move - game.player2Move == 0{
 		return true, games.NO_PLAYER
-	} else if (game.player1Move - game.player2Move)%3 == 1 {
+	} else if ((game.player1Move - game.player2Move)%3+3)%3 == 1 { 
 		return true, games.PLAYER_1
 	}
 	return true, games.PLAYER_2
