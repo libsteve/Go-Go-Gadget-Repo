@@ -56,13 +56,6 @@ func (game *Game) CheckMoveValid(move string) bool {
 
 func (game *Game) Finished() (bool, games.Player){
 	 for _, row := range game.Board{
-	 	for _,square := range row{
-	 		if square == games.NO_PLAYER{
-	 			return false, games.NO_PLAYER
-	 		}
-	 	}
-	 }
-	 for _, row := range game.Board{
 		if row[0] == row[1]  && row[1] == row[2]{
 			return true, row[0]
 		}
@@ -77,26 +70,17 @@ func (game *Game) Finished() (bool, games.Player){
 	 }
 	 if game.Board[0][2] == game.Board[1][1] &&game.Board[0][2] == game.Board[2][0]{
 	 	return true, game.Board[0][2]
+	 } 
+	 for _, row := range game.Board{
+	 	for _,square := range row{
+	 		if square == games.NO_PLAYER{
+	 			return false, games.NO_PLAYER
+	 		}
+	 	}
 	 }
 	 return true, games.NO_PLAYER
 }
 
-func (game *Game) getBoard() []string{
-	var array []string
-	for _,rows := range game.Board{
-		str := ""
-		for _,square := range rows{
-			switch square{
-				case games.NO_PLAYER:
-					str+="  "
-				case games.PLAYER_1:
-					str+="x "
-				case games.PLAYER_2:
-					str+="o "
-			}
-		}
-		strings.TrimSpace(str)
-		array = append(array,str)
-	}
-	return array
+func (game *Game) IsSimulataneous(){
+	return false;
 }

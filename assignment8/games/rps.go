@@ -53,3 +53,7 @@ func (game *Game) Finished() (bool, games.Player){
 	}
 	return true, games.PLAYER_2
 }
+
+func (game *Game) IsSimulataneous(){
+	return true;
+}

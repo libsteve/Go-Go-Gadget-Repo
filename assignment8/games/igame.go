@@ -14,6 +14,8 @@ An interface for a game.
 */
 type Igame interface {
 	
+
+	IsSimultaneous() bool
 	/*
 	Check that the given move is a valid move.
 
