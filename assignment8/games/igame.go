@@ -44,12 +44,4 @@ type Igame interface {
 	*/
 	Finished() (bool, Player)
 
-	/*
-	Get the game board information.
-
-	Returns:
-		an array of strings where each string represets a row of points and columns of points are separated by a single space
-	*/
-	GetBoard() []string
-
 }
