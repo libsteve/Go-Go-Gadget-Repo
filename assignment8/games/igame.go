@@ -3,9 +3,9 @@ package games
 type Player int
 
 const(
-	noPlayer = (games.Player)(iota)
-	player1
-	player2
+	NO_PLAYER = (Player)(iota)
+	PLAYER_1
+	PLAYER_2
 
 )
 
@@ -21,7 +21,7 @@ type Igame interface {
 		move - a move string
 	
 	Returns:
-		bool - true if the move is valid, false otherwise
+		true if the move is valid, false otherwise
 	*/
 	CheckMoveValid(move string) bool
 	
@@ -38,8 +38,9 @@ type Igame interface {
 	Check to see if the game is finished.
 
 	Returns:
-		bool - true if the game is finished, flase otherwise
-
+		true if the game is finished, false otherwise
+		the player that won or noplayer if there is a tie or the game isn't finished yet
+	
 	*/
 	Finished() (bool, Player)
 
@@ -47,7 +48,7 @@ type Igame interface {
 	Get the game board information.
 
 	Returns:
-		[]string - an array of strings where each string represets a row of points and columns of points are separated by a single space
+		an array of strings where each string represets a row of points and columns of points are separated by a single space
 	*/
 	GetBoard() []string
 

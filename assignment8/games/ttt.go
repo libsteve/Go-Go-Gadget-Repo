@@ -12,7 +12,7 @@ func newGame() *Game{
 	news := new(Game)	
 	for _,rows := range news.Board {
 		for j,_ := range rows {
-			rows[j] = noPlayer
+			rows[j] = games.NO_PLAYER
 		}
 	}
 	news.Choices = map[string]int {
@@ -33,9 +33,9 @@ func(game *Game) MakeMove(player int, move string){
 	var p games.Player
 	switch player{
 		case 0:
-			p = player1
+			p = games.PLAYER_1
 		case 1:
-			p = player2
+			p = games.PLAYER_2
 	}
 	game.Board[n/3][n%3] = p
 }
@@ -58,8 +58,8 @@ func (game *Game) CheckMoveValid(move string) bool {
 func (game *Game) Finished() (bool, games.Player){
 	 for _, row := range game.Board{
 	 	for _,square := range row{
-	 		if square == noPlayer{
-	 			return false, noPlayer
+	 		if square == games.NO_PLAYER{
+	 			return false, games.NO_PLAYER
 	 		}
 	 	}
 	 }
@@ -79,7 +79,7 @@ func (game *Game) Finished() (bool, games.Player){
 	 if game.Board[0][2] == game.Board[1][1] &&game.Board[0][2] == game.Board[2][0]{
 	 	return true, game.Board[0][2]
 	 }
-	 return true, noPlayer
+	 return true, games.NO_PLAYER
 }
 
 func (game *Game) getBoard() []string{
@@ -88,11 +88,11 @@ func (game *Game) getBoard() []string{
 		str := ""
 		for _,square := range rows{
 			switch square{
-				case noPlayer:
+				case games.NO_PLAYER:
 					str+="  "
-				case player1:
+				case games.PLAYER_1:
 					str+="x "
-				case player2:
+				case games.PLAYER_2:
 					str+="o "
 			}
 		}

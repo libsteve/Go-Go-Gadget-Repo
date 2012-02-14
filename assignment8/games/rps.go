@@ -46,13 +46,13 @@ func (game *Game) CheckMoveValid(move string) bool {
 
 func (game *Game) Finished() (bool, games.Player){
 	if game.player1Move == 0 || game.player2Move == 0 {
-		return false, noPlayer
+		return false, games.NO_PLAYER
 	} else if game.player1Move - game.player2Move == 0{
-		return true, noPlayer
+		return true, games.NO_PLAYER
 	} else if (game.player1Move - game.player2Move)%3 == 1 {
-		return true, player1
+		return true, games.PLAYER_1
 	}
-	return true, player2
+	return true, games.PLAYER_2
 }
 
 func (game *Game) GetBoard() []string{
