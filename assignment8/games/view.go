@@ -1,8 +1,22 @@
-package view
+package games
 
-import ( "games"; "os"; "bufio" )
+import ( "os"; "bufio" )
 
+/*
+Create a new View struct.
+*/
+func NewView() *games.View {
+	v := new(View)
+	v.Request = make(chan games.Request)
+	v.Response = make(chan games.Response)
+	return v
+}
+
+/*
+The run loop for the view.
+*/
 func (v *games.View) Loop() os.Error {
+
 	var req Request
 
 	var player_id string
@@ -12,28 +26,28 @@ func (v *games.View) Loop() os.Error {
 		req <- v.Request
 
 		switch req.Command {
-		case games.Enable:
+		case Enable:
 			// unfreeze user input/output
 			// allow player to give input
 			player_id = req.Args[0]
 			enable(player_id)
 
-		case games.Get:
+		case Get:
 			v.Responce <- get() // the player's move
 			// freeze user input/output
 
-		case games.Set:
+		case Set:
 			// save the other player's move
 			opponent_move = req.Args[0]
 
-		case games.Show:
+		case Show:
 			// display the updated board
 			show(player_id, opponent_move)
 
-		case games.Done:
+		case Done:
 			outcome := games.Outcome(req.Args[0])
 			switch outcome {
-			case games.Draw:
+			case Draw:
 				// show that the game is a tie
 				println(string(outcome))
 
