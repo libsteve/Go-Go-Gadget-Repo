@@ -2,11 +2,19 @@ package ttt
 
 import ( "strings"; "./games" )
 
+/*
+ The Game struct
+
+ Has a board and choices 
+ */
 type Game struct{
 	Board [3][3]games.Player
 	Choices map[string]int
 }
 
+/*
+ Creates a new game
+ */
 func NewGame() *Game{
 	news := new(Game)	
 	for i,_ := range news.Board {
@@ -27,6 +35,9 @@ func NewGame() *Game{
 	return news
 }
 
+/*
+ Makes a move
+ */
 func(game *Game) MakeMove(player int, move string){
 	n := game.Choices[strings.ToLower(move)]
 	var p games.Player
@@ -60,6 +71,11 @@ func (game *Game) CheckMoveValid(move string) bool {
 	return false
 }
 
+/*
+ Is the game finished
+
+ returns a bool representing whether the game is finished and the player who one (no player if draw)
+ */
 func (game *Game) Finished() (bool, games.Player){
 	 for _, row := range game.Board{
 		if row[0] == row[1]  && row[1] == row[2] && row[0] != games.NO_PLAYER{
@@ -87,10 +103,16 @@ func (game *Game) Finished() (bool, games.Player){
 	 return true, games.NO_PLAYER
 }
 
+/*
+ Are player moves simultaneous
+ */
 func (game *Game) IsSimultaneous() bool {
 	return false;
 }
 
+/*
+ Clears the board
+ */
 func (game *Game) Clear(){
 	for i,_ := range game.Board {
 		for j,_ := range game.Board[i] {

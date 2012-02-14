@@ -2,12 +2,18 @@ package rps
 
 import ( "strings"; "./games" )
 
+/*
+ Creates a new rock paper scissor game
+ */
 type Game struct{
 	player1Move int
 	player2Move int
 	Choices map[string]int
 }
 
+/*
+ Create a new game
+ */
 func NewGame() *Game{
 	news := new(Game)
 	news.Choices = map[string]int{
@@ -19,6 +25,9 @@ func NewGame() *Game{
 	return news
 }
 
+/*
+ Make a move 
+ */
 func(game *Game) MakeMove(player int, move string){
 	n := game.Choices[strings.ToLower(move)]
 	if player == 0{
@@ -43,6 +52,11 @@ func (game *Game) CheckMoveValid(move string) bool {
 	return false
 }
 
+/*
+ Is the game finished
+
+ returns a bool representing whether the game is finished and the player who one (no player if draw)
+ */
 func (game *Game) Finished() (bool, games.Player){
 	if game.player1Move == 0 || game.player2Move == 0 {
 		return false, games.NO_PLAYER
@@ -54,10 +68,16 @@ func (game *Game) Finished() (bool, games.Player){
 	return true, games.PLAYER_2
 }
 
+/*
+ Are player moves simultaneous
+ */
 func (game *Game) IsSimultaneous() bool {
 	return true;
 }
 
+/*
+ Clears the board
+ */
 func (game *Game) Clear(){
 	game.player1Move = 0
 	game.player2Move = 0
