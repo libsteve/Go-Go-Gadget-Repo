@@ -53,32 +53,3 @@ func (game *Game) Finished() (bool, games.Player){
 	}
 	return true, games.PLAYER_2
 }
-
-func (game *Game) GetBoard() []string{
-	var array []string
-	str := "Player 1: "
-	switch game.player1Move{
-		case 0:
-			str += "None"
-		case 1:
-			str += "Rock"
-		case 2:
-			str += "Paper"
-		case 3:
-			str += "Scisor"
-	}
-	array = append(array, str)
-	str = "\nPlayer 2: "
-	switch game.player1Move{
-		case 0:
-			str += "None"
-		case 1:
-			str += "Rock"
-		case 2:
-			str += "Paper"
-		case 3:
-			str += "Scisor"
-	}
-	array = append(array, str)
-	return array
-}
