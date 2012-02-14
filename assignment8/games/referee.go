@@ -32,7 +32,10 @@ func (r *Referee) Loop() os.Error {
 
 			///////
 			// check to see if the game is finished
-			r.checkFinished()
+			if r.checkFinished() {
+				defer r.Loop()
+				return nil
+			}
 
 			///////
 			// repeat this until the user's move is valid
