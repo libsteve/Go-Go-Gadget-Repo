@@ -9,9 +9,9 @@ type Game struct{
 
 func NewGame() *Game{
 	news := new(Game)	
-	for _,rows := range news.Board {
-		for j,_ := range rows {
-			rows[j] = games.NO_PLAYER
+	for i,_ := range news.Board {
+		for j,_ := range news.Board[i] {
+			news.Board[i][j] = games.NO_PLAYER
 		}
 	}
 	news.Choices = map[string]int {
@@ -92,9 +92,9 @@ func (game *Game) IsSimultaneous() bool {
 }
 
 func (game *Game) Clear(){
-	for _,rows := range game.Board {
-		for j,_ := range rows {
-			rows[j] = games.NO_PLAYER
+	for i,_ := range game.Board {
+		for j,_ := range game.Board[i] {
+			game.Board[i][j] = games.NO_PLAYER
 		}
 	}
 }
