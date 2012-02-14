@@ -14,7 +14,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "You can only play one game at a time.")
 		return
 	} else if !( *r || *t ) {
-		fmt.Fprintln(os.Stderr, "You must select a game to paly.")
+		fmt.Fprintln(os.Stderr, "You must select a game to play.")
 		return
 	}
 
