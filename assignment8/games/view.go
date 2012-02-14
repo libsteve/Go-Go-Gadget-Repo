@@ -12,10 +12,16 @@ func NewView() *View {
 	return v
 }
 
+type OutView struct {
+	*View
+	Reader *os.File
+	Writer *os.File
+}
+
 /*
 The run loop for the view.
 */
-func (v *View) Loop() os.Error {
+func (v *OutView) Loop() os.Error {
 
 	var player_id string
 	var opponent_move string
@@ -28,10 +34,10 @@ func (v *View) Loop() os.Error {
 			// unfreeze user input/output
 			// allow player to give input
 			player_id = req.Args[0]
-			enable(player_id)
+			v.enable(player_id)
 
 		case Get:
-			v.Response <- []string{get()} // the player's move
+			v.Response <- []string{v.get()} // the player's move
 			// freeze user input/output
 
 		case Set:
@@ -41,18 +47,18 @@ func (v *View) Loop() os.Error {
 		case Show:
 			// display the updated board
 			player_id = req.Args[0]
-			show(player_id, opponent_move)
+			v.show(player_id, opponent_move)
 
 		case Done:
 			outcome := Outcome(req.Args[0])
 			switch outcome {
 			case Draw:
 				// show that the game is a tie
-				println(string(outcome))
+				v.writeln(string(outcome))
 
 			default:
 				// show that the other player won
-				println(player_id + " " + string(outcome) + "s")
+				v.writeln(player_id + " " + string(outcome) + "s")
 			}
 		}
 
@@ -61,16 +67,24 @@ func (v *View) Loop() os.Error {
 	return nil
 }
 
-func enable(player_id string) {
-	print("Player " + player_id + "'s Move: ")
+func (v *OutView) write(msg string) {
+	v.Writer.Write([]byte(msg))
 }
 
-func get() string {
-	r := bufio.NewReader(os.Stdin)
+func (v *OutView) writeln(msg string) {
+	v.write(msg + "\n")
+}
+
+func (v *OutView) enable(player_id string) {
+	v.write("Player " + player_id + "'s Move: ")
+}
+
+func (v *OutView) get() string {
+	r := bufio.NewReader(v.Reader)
 	raw, _, _ := r.ReadLine()
 	return string(raw)
 }
 
-func show(player_id string, opponent_move string) {
-	println("Player " + player_id + "'s Opponent's Move: " + opponent_move)
+func (v *OutView) show(player_id string, opponent_move string) {
+	v.writeln("Player " + player_id + "'s Opponent's Move: " + opponent_move)
 }

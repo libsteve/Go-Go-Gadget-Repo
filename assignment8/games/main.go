@@ -1,6 +1,7 @@
 package main
 
-import ( "./games"; "./rps"; "./ttt"; "flag"; "fmt"; "os" )
+import ( "./games"; "./rps"; "./ttt" )
+import ( "flag"; "fmt"; "os" )
 
 func main() {
 
@@ -26,12 +27,31 @@ func main() {
 		game = ttt.NewGame()
 	}
 
+	args := flag.Args()
+	var file *os.File
+	if len(args) == 1 { 
+		var err os.Error
+		if file, err = os.OpenFile(args[0], os.O_RDWR, 0666); err != nil {
+			fmt.Fprintln(os.Stderr, "404: File Not Found.")
+			return
+		}
+	}
+
 	v1 := games.NewView()
 	v2 := games.NewView()
 	ref := games.NewReferee(game, v1, v2)
 
-	go v1.Loop()
-	go v2.Loop()
+	ov1 := &games.OutView{v1, os.Stdin, os.Stdout}
+
+	var ov2 *games.OutView
+	if file != nil {
+		ov2 = &games.OutView{v2, file, file}
+	} else {
+		ov2 = &games.OutView{v2, os.Stdin, os.Stdout}
+	}
+
+	go ov1.Loop()
+	go ov2.Loop()
 
 	ref.Loop()
 
