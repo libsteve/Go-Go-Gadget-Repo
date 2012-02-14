@@ -2,6 +2,8 @@
 *.DS_Store
 *.zip
 *.6
+*.out
+
 assignment5/make/mk
 assignment5/make/make
 assignment5/make/dag
@@ -14,3 +16,5 @@ assignment6/map_reduce/matrixServer
 assignment6/map_reduce/regclient-test
 assignment6/map_reduce/regserver
 assignment6/map_reduce/regclient
+assignment7/wagon/wag
+assignment8/games/games
