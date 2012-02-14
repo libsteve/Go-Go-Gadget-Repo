@@ -21,6 +21,8 @@ func NewReferee(game Igame, views ...*View) *Referee {
 Loop throught the Referee's operations.
 */
 func (r *Referee) Loop() os.Error {
+	simultaneous := r.game.IsSimultaneous()
+
 	for {
 
 		var move string
@@ -57,15 +59,13 @@ func (r *Referee) Loop() os.Error {
 				if other != player { 
 					other.Request <- Request{Set, []string{move}} 
 				}
-			}			
+			}
+			
+			if simultaneous { r.show() }			
 
 		}
 
-		///////
-		// have all players show the move
-		for _, player := range r.players {
-			player.Request <- Request{Show, []string{}}
-		}
+		if !simultaneous { r.show() }
 
 	}
 
@@ -91,4 +91,13 @@ func (r *Referee) checkFinished() bool {
 		return true
 	}
 	return false
+}
+
+/*
+Have all players show the move.
+*/
+func (r *Referee) show() {
+	for _, player := range r.players {
+		player.Request <- Request{Show, []string{}}
+	}
 }

@@ -81,6 +81,6 @@ func (game *Game) Finished() (bool, games.Player){
 	 return true, games.NO_PLAYER
 }
 
-func (game *Game) IsSimulataneous(){
+func (game *Game) IsSimultaneous() bool {
 	return false;
 }
