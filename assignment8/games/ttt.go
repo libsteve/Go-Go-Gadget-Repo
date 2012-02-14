@@ -49,26 +49,32 @@ Returns:
 	bool - true if the move is valid, false otherwise
 */
 func (game *Game) CheckMoveValid(move string) bool {
-	rps := strings.ToLower(move)
-	if _, ok := game.Choices[rps]; ok { return true }
+	ttt := strings.ToLower(move)
+	if _, ok := game.Choices[ttt]; ok { 
+		n := game.Choices[ttt]
+		if(game.Board[n/3][n%3] != games.NO_PLAYER){
+			return false
+		}
+		return true 
+	}
 	return false
 }
 
 func (game *Game) Finished() (bool, games.Player){
 	 for _, row := range game.Board{
-		if row[0] == row[1]  && row[1] == row[2]{
+		if row[0] == row[1]  && row[1] == row[2] && row[0] != games.NO_PLAYER{
 			return true, row[0]
 		}
 	 }
 	 for i := 0; i < 3; i++{
-	 	if game.Board[i][0] == game.Board[i][1] && game.Board[i][0] == game.Board[i][2]{
+	 	if game.Board[0][i] == game.Board[1][i] && game.Board[0][i] == game.Board[2][i] && game.Board[0][i] != games.NO_PLAYER{
 	 		return true, game.Board[i][0]
 	 	}
 	 }
-	 if game.Board[0][0] == game.Board[1][1] &&game.Board[0][0] == game.Board[2][2]{
+	 if game.Board[0][0] == game.Board[1][1] &&game.Board[0][0] == game.Board[2][2] && game.Board[0][0] != games.NO_PLAYER{
 	 	return true, game.Board[0][0]
 	 }
-	 if game.Board[0][2] == game.Board[1][1] &&game.Board[0][2] == game.Board[2][0]{
+	 if game.Board[0][2] == game.Board[1][1] &&game.Board[0][2] == game.Board[2][0] && game.Board[0][2] != games.NO_PLAYER{
 	 	return true, game.Board[0][2]
 	 } 
 	 for _, row := range game.Board{
@@ -83,4 +89,12 @@ func (game *Game) Finished() (bool, games.Player){
 
 func (game *Game) IsSimultaneous() bool {
 	return false;
+}
+
+func (game *Game) Clear(){
+	for _,rows := range game.Board {
+		for j,_ := range rows {
+			rows[j] = games.NO_PLAYER
+		}
+	}
 }

@@ -57,3 +57,8 @@ func (game *Game) Finished() (bool, games.Player){
 func (game *Game) IsSimultaneous() bool {
 	return true;
 }
+
+func (game *Game) Clear(){
+	game.player1Move = 0
+	game.player2Move = 0
+}
