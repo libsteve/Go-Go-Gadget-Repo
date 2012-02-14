@@ -41,13 +41,13 @@ func main() {
 	v2 := games.NewView()
 	ref := games.NewReferee(game, v1, v2)
 
-	ov1 := &games.OutView{v1, os.Stdin, os.Stdout}
+	ov1 := &games.ViewView{v1, os.Stdin, os.Stdout}
 
-	var ov2 *games.OutView
+	var ov2 *games.ViewView
 	if file != nil {
-		ov2 = &games.OutView{v2, file, file}
+		ov2 = &games.ViewView{v2, file, file}
 	} else {
-		ov2 = &games.OutView{v2, os.Stdin, os.Stdout}
+		ov2 = &games.ViewView{v2, os.Stdin, os.Stdout}
 	}
 
 	go ov1.Loop()

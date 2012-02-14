@@ -12,7 +12,7 @@ func NewView() *View {
 	return v
 }
 
-type OutView struct {
+type ViewView struct {
 	*View
 	Reader *os.File
 	Writer *os.File
@@ -21,7 +21,7 @@ type OutView struct {
 /*
 The run loop for the view.
 */
-func (v *OutView) Loop() os.Error {
+func (v *ViewView) Loop() os.Error {
 
 	var player_id string
 	var opponent_move string
@@ -67,24 +67,24 @@ func (v *OutView) Loop() os.Error {
 	return nil
 }
 
-func (v *OutView) write(msg string) {
+func (v *ViewView) write(msg string) {
 	v.Writer.Write([]byte(msg))
 }
 
-func (v *OutView) writeln(msg string) {
+func (v *ViewView) writeln(msg string) {
 	v.write(msg + "\n")
 }
 
-func (v *OutView) enable(player_id string) {
+func (v *ViewView) enable(player_id string) {
 	v.write("Player " + player_id + "'s Move: ")
 }
 
-func (v *OutView) get() string {
+func (v *ViewView) get() string {
 	r := bufio.NewReader(v.Reader)
 	raw, _, _ := r.ReadLine()
 	return string(raw)
 }
 
-func (v *OutView) show(player_id string, opponent_move string) {
+func (v *ViewView) show(player_id string, opponent_move string) {
 	v.writeln("Player " + player_id + "'s Opponent's Move: " + opponent_move)
 }
