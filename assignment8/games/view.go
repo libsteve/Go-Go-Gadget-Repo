@@ -5,25 +5,23 @@ import ( "os"; "bufio" )
 /*
 Create a new View struct.
 */
-func NewView() *games.View {
+func NewView() *View {
 	v := new(View)
-	v.Request = make(chan games.Request)
-	v.Response = make(chan games.Response)
+	v.Request = make(chan Request)
+	v.Response = make(chan Response)
 	return v
 }
 
 /*
 The run loop for the view.
 */
-func (v *games.View) Loop() os.Error {
-
-	var req Request
+func (v *View) Loop() os.Error {
 
 	var player_id string
 	var opponent_move string
 	for {
 		
-		req <- v.Request
+		req := <- v.Request
 
 		switch req.Command {
 		case Enable:
@@ -33,7 +31,7 @@ func (v *games.View) Loop() os.Error {
 			enable(player_id)
 
 		case Get:
-			v.Responce <- get() // the player's move
+			v.Response <- []string{get()} // the player's move
 			// freeze user input/output
 
 		case Set:
@@ -45,7 +43,7 @@ func (v *games.View) Loop() os.Error {
 			show(player_id, opponent_move)
 
 		case Done:
-			outcome := games.Outcome(req.Args[0])
+			outcome := Outcome(req.Args[0])
 			switch outcome {
 			case Draw:
 				// show that the game is a tie
@@ -53,20 +51,22 @@ func (v *games.View) Loop() os.Error {
 
 			default:
 				// show that the other player won
-				println(player_id " " + string(outcome) + "s")
+				println(player_id + " " + string(outcome) + "s")
 			}
 		}
 
 	}
+
+	return nil
 }
 
 func enable(player_id string) {
-	print(player_id + "'s' Move: ")
+	print(player_id + "'s Move: ")
 }
 
 func get() string {
 	r := bufio.NewReader(os.Stdin)
-	raw, _, _ := Reader.ReadLine()
+	raw, _, _ := r.ReadLine()
 	return string(raw)
 }
 

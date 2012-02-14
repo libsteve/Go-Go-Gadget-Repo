@@ -1,14 +1,13 @@
 package ttt
 
-import "strings"
-import "./igame"
+import ( "strings"; "./games" )
 
 type Game struct{
 	Board [3][3]games.Player
 	Choices map[string]int
 }
 
-func newGame() *Game{
+func NewGame() *Game{
 	news := new(Game)	
 	for _,rows := range news.Board {
 		for j,_ := range rows {

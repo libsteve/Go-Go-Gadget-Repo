@@ -1,6 +1,6 @@
 package games
 
-import ( "strconv" )
+import ( "strconv"; "os" )
 
 type Referee struct {
 	players []*View
@@ -14,6 +14,7 @@ func NewReferee(game Igame, views ...*View) *Referee {
 	r := new(Referee)
 	r.players = views
 	r.game = game
+	return r
 }
 
 /*
@@ -22,12 +23,11 @@ Loop throught the Referee's operations.
 func (r *Referee) Loop() os.Error {
 	for {
 
-		var response Response
 		var move string
 
 		///////
 		// check to see if the game is finished
-		checkFinished()
+		r.checkFinished()
 		
 		for id, player := range r.players {
 
@@ -44,8 +44,8 @@ func (r *Referee) Loop() os.Error {
 
 				///////
 				// check to see if the player's move is valid
-				response <- player.Response
-				if move = string(response); r.game.CheckMoveValid(move) {
+				response := <- player.Response
+				if move = string(response[0]); r.game.CheckMoveValid(move) {
 					break
 				}
 			}
@@ -67,6 +67,8 @@ func (r *Referee) Loop() os.Error {
 		}
 
 	}
+
+	return nil
 }
 
 /*
@@ -79,7 +81,7 @@ func (r *Referee) checkFinished() bool {
 		for id, player := range r.players {
 			if winner == NO_PLAYER {
 				player.Request <- Request{Done, []string{string(Draw)}}
-			} else if winner == games.Player(id+1) {
+			} else if winner == Player(id+1) {
 				player.Request <- Request{Done, []string{string(Win)}}
 			} else {
 				player.Request <- Request{Done, []string{string(Lose)}}

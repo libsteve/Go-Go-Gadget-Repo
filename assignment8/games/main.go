@@ -1,8 +1,11 @@
 package main
 
-import ( "games"; "rps"; "ttt" )
+import ( "./games"; "./rps" )
+//import "./ttt"
 
 func main() {
+
+	game := rps.NewGame()
 
 	v1 := games.NewView()
 	v2 := games.NewView()
@@ -11,6 +14,6 @@ func main() {
 	go v1.Loop()
 	go v2.Loop()
 
-	go ref.Loop()
+	ref.Loop()
 
 }

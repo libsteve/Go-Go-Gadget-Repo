@@ -1,7 +1,6 @@
 package rps
 
-import "strings"
-import "./igame"
+import ( "strings"; "./games" )
 
 type Game struct{
 	player1Move int
