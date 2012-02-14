@@ -28,9 +28,30 @@ This is a reusable implementation of components based on the Model View Controll
 Interaction is based on channels. The package netchan implements exporters and importers to distribute channels over a network. This is one way to distribute the games. This paper describes a different pattern to distribute turn-taking games like these over a server which permits only pull access such as remote procedure calls or a protocol such as HTTP.
 
 
-Instructions
-------------
+Usage
+-----
 
-To build and compile:
+A makefile has been provided for you to use
 
+To compile the program in the command line, either of
+the following will work:
+	
 	$ make
+	$ make all
+
+To remove the executable: 
+	
+	$ make clean
+
+To generate documentation:
+
+	$ make doc
+
+To run the program:
+	
+	$ ./games [flags]
+
+Possible flags are
+	
+	-ttt - tic tac toe
+	-rps - rock paper scissors
