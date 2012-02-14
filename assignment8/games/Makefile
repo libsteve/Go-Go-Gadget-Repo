@@ -2,18 +2,12 @@ include $(GOROOT)/src/MAKE.inc
 
 all:	games
 
-games:	main.go view.6 referee.6 rps.6 ttt.6
+games:	main.go games.6 rps.6 ttt.6
 	6g main.go
 	6l -o games main.go
 
-view.6:	view.go games.6
-	6g view.go
-
-referee.6:	referee.go games.6
-	6g referee.go
-
-games.6:	games.go igame.go
-	6g igame.go games.go
+games.6:	games.go igame.go referee.go view.go
+	6g view.go referee.go igame.go games.go
 
 rps.6:	rps.go
 	6g rps.go
