@@ -49,9 +49,19 @@ To generate documentation:
 
 To run the program:
 	
-	$ ./games [flags]
+	$ ./games [flags] [<filename>]
 
-Possible flags are
+Possible flags are:
 	
 	-ttt - tic tac toe
 	-rps - rock paper scissors
+
+Possible arguments are:
+
+	<filename>	-	the file to use for standard in/out of player 2's view
+					good for use with second terminal
+					example:
+
+						$ ./games -ttt /dev/ttys002
+					
+					if no file is given, standard in/out is shared between player 1 and 2
