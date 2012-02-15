@@ -12,6 +12,9 @@ func NewView() *View {
 	return v
 }
 
+/*
+A struct for the purpose of displaying output to specific terminals.
+*/
 type ViewView struct {
 	*View
 	Reader *os.File
@@ -54,11 +57,11 @@ func (v *ViewView) Loop() os.Error {
 			switch outcome {
 			case Draw:
 				// show that the game is a tie
-				v.writeln(string(outcome))
+				v.writeln("It's a " + string(outcome))
 
 			default:
 				// show that the other player won
-				v.writeln(player_id + " " + string(outcome) + "s")
+				v.writeln("Player " + player_id + " " + string(outcome) + "s")
 			}
 		}
 
@@ -67,24 +70,34 @@ func (v *ViewView) Loop() os.Error {
 	return nil
 }
 
+////
+// write the given message to the given output
 func (v *ViewView) write(msg string) {
 	v.Writer.Write([]byte(msg))
 }
 
+////
+// write the given message to the given output with a new line at the end
 func (v *ViewView) writeln(msg string) {
 	v.write(msg + "\n")
 }
 
+////
+// enable the player's view
 func (v *ViewView) enable(player_id string) {
 	v.write("Player " + player_id + "'s Move: ")
 }
 
+////
+// get the player's input
 func (v *ViewView) get() string {
 	r := bufio.NewReader(v.Reader)
 	raw, _, _ := r.ReadLine()
 	return string(raw)
 }
 
+////
+// show the other players' results
 func (v *ViewView) show(player_id string, opponent_move string) {
 	v.writeln("Player " + player_id + "'s Opponent's Move: " + opponent_move)
 }

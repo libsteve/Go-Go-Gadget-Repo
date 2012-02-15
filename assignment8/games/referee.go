@@ -2,6 +2,9 @@ package games
 
 import ( "strconv"; "os" )
 
+/*
+A struct to represent a referee handling many players' views for a given game.
+*/
 type Referee struct {
 	players []*View
 	game Igame
@@ -9,6 +12,10 @@ type Referee struct {
 
 /*
 Create a new Referee struct.
+
+Parameters:
+	game - the game
+	views - all the views for every player
 */
 func NewReferee(game Igame, views ...*View) *Referee {
 	r := new(Referee)
