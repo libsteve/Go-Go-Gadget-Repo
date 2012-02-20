@@ -31,9 +31,9 @@ func (r *Referee) Loop() os.Error {
 	var simultaneous bool
 	simultaneous = r.game.IsSimultaneous()
 
-	for {
+	simul_chan := make(chan int)
 
-		var move string
+	for {
 		
 		for id, player := range r.players {
 
@@ -45,42 +45,72 @@ func (r *Referee) Loop() os.Error {
 			}
 
 			///////
-			// repeat this until the user's move is valid
-			for {
-				///////
-				// enable the player's view
-				player.Request <- Request{Enable, []string{strconv.Itoa(id+1)}}
+			// get and set the player's move
+			go r.getAndSetMove(id, player, simul_chan)
 
-				///////
-				// get the player's input
-				player.Request <- Request{Get, []string{}}
-
-				///////
-				// check to see if the player's move is valid
-				response := <- player.Response
-				if move = string(response[0]); r.game.CheckMoveValid(move) {
-					r.game.MakeMove(id,move)
-					break
-				}
+			if !simultaneous {
+				<- simul_chan
+				r.show(id)
 			}
-
-			///////
-			// set this player's move for all other players
-			for _, other := range r.players {
-				if other != player { 
-					other.Request <- Request{Set, []string{move}} 
-				}
-			}
-			
-			if !simultaneous { r.show(id) }			
 
 		}
 
-		if simultaneous { r.show() }
+		if simultaneous { 
+			total := 0
+			// wait until all payers have moved
+			for total < len(r.players) {
+				total += <- simul_chan
+			}
+			r.show()
+		}
 
 	}
 
 	return nil
+}
+
+/*
+Enable the player's view
+Get the player's move
+Set the player's move fo all other players
+
+Parameters:
+	id - the player's id
+	player - the player's view
+	finished - a chanel to notify when the method is done (will give a value of 1)
+*/
+func (r *Referee) getAndSetMove(id int, player *View, finished chan int) {
+	var move string
+
+	///////
+	// repeat this until the user's move is valid
+	for {
+		///////
+		// enable the player's view
+		player.Request <- Request{Enable, []string{strconv.Itoa(id+1)}}
+
+		///////
+		// get the player's input
+		player.Request <- Request{Get, []string{}}
+
+		///////
+		// check to see if the player's move is valid
+		response := <- player.Response
+		if move = string(response[0]); r.game.CheckMoveValid(move) {
+			r.game.MakeMove(id,move)
+			break
+		}
+	}
+
+	///////
+	// set this player's move for all other players
+	for _, other := range r.players {
+		if other != player { 
+			other.Request <- Request{Set, []string{move}} 
+		}
+	}
+
+	finished <- 1
 }
 
 /*

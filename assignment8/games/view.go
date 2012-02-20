@@ -1,6 +1,6 @@
 package games
 
-import ( "os"; "bufio" )
+import ( "os"; "bufio"; "fmt" )
 
 /*
 Create a new View struct.
@@ -73,13 +73,13 @@ func (v *ViewView) Loop() os.Error {
 ////
 // write the given message to the given output
 func (v *ViewView) write(msg string) {
-	v.Writer.Write([]byte(msg))
+	fmt.Fprint(v.Writer, msg)
 }
 
 ////
 // write the given message to the given output with a new line at the end
 func (v *ViewView) writeln(msg string) {
-	v.write(msg + "\n")
+	fmt.Fprintln(v.Writer, msg)
 }
 
 ////
