@@ -84,7 +84,7 @@ func (game *Game) Finished() (bool, games.Player){
 	 }
 	 for i := 0; i < 3; i++{
 	 	if game.Board[0][i] == game.Board[1][i] && game.Board[0][i] == game.Board[2][i] && game.Board[0][i] != games.NO_PLAYER{
-	 		return true, game.Board[i][0]
+	 		return true, game.Board[0][i]
 	 	}
 	 }
 	 if game.Board[0][0] == game.Board[1][1] &&game.Board[0][0] == game.Board[2][2] && game.Board[0][0] != games.NO_PLAYER{
