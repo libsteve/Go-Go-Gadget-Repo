@@ -1,6 +1,10 @@
 include $(GOROOT)/src/MAKE.inc
 
-all:	local remote
+all:	local remote server
+
+server: server.go
+	6g server.go
+	6l -o server server.6
 
 remote: remote.go games.6 rps.6 ttt.6
 	6g remote.go
