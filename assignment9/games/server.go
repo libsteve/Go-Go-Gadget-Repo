@@ -21,25 +21,17 @@ func main() {
 	// create the map of channels for the server
 	server := &server{make(map[string]chan string)}
 
-	get := func(w http.ResponseWriter, r *http.Request) {
-		server.getvalue(w, r)
-	}
-
-	set := func(w http.ResponseWriter, r *http.Request) {
-		server.setvalue(w, r)
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		key := r.FormValue("key")
+		value := r.FormValue("value")
+		if value != "" { server.setvalue(w, key, value) }
+		if value == "" { server.getvalue(w, key) }
 	}
 
 	for _, named_channel := range args {
 		server.channels[named_channel] = make(chan string), true
 
-		getkey := "/?key="+named_channel
-		http.HandleFunc(getkey, get)
-
-		setkey := "/?key="+named_channel+"&value="
-		http.HandleFunc(setkey, set)
-
-		println(getkey)
-		println(setkey)
+		http.HandleFunc("/", handler)
 	}
 
 	http.ListenAndServe(*port, nil)
@@ -49,23 +41,14 @@ type server struct {
 	channels map[string]chan string
 }
 
-func (s *server) setvalue(w http.ResponseWriter, r *http.Request) {
-	values := r.URL.Query()
-	if value, ok := values["key"]; ok {
-		if channel, ok := s.channels[value[0]]; ok {
-			if value, ok = values["value"]; ok {
-				channel <- value[0]
-				fmt.Println(w, "Success")
-			}
-		}
+func (s *server) setvalue(w http.ResponseWriter, key, value string) {
+	if channel, ok := s.channels[key]; ok {
+		channel <- value
 	}
 }
 
-func (s *server) getvalue(w http.ResponseWriter, r *http.Request) {
-	values := r.URL.Query()
-	if value, ok := values["key"]; ok {
-		if channel, ok := s.channels[value[0]]; ok {
-			fmt.Fprint(w, <-channel)
-		}
+func (s *server) getvalue(w http.ResponseWriter, key string) {
+	if channel, ok := s.channels[key]; ok {
+		fmt.Fprint(w, <-channel)
 	}
 }
