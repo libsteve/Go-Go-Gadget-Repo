@@ -1,6 +1,6 @@
 package main
 
-import ( "http"; "flag"; "fmt"; "os"; "bufio"; "strings" )
+import ( "http"; "flag"; "fmt"; "os"; "bufio"; "strings"; "url" )
 
 func main() {
 	var host *string
@@ -15,10 +15,10 @@ func main() {
 	for _, arg := range args {
 		//////
 		// get the response for the query
-		var query string
-		if query = parse_arg(arg); query == "" { continue }
-		if response, err := client.Get("http://" + *host + query); err == nil {
-
+		var vals url.Values
+		if vals = parse(arg); vals == nil { continue }
+	//	if response, err := client.Get("http://" + *host + query); err == nil {
+		if response, err := client.PostForm("http://" + *host, vals); err == nil{
 			//////
 			// read and print the response
 			r := bufio.NewReader(response.Body)
@@ -36,19 +36,19 @@ func main() {
 /*
 parse the argument and return the proper query format
 */
-func parse_arg(arg string) string {
-	key := "/?key="
-	value := "&value="
-
+func parse(arg string) url.Values {
+	vals := make(url.Values)
 	split := strings.Split(arg, "=")
 	if len(split) < 1 || len(split) > 2 {
 		fmt.Fprintln(os.Stderr, arg + " : invalid argument; skipping")
-	} else {
-		if len(split) == 1 {
-			return key + split[0]
-		} else {
-			return key + split[0] + value + split[1]
+		return nil
+	}else{
+		if len(split) == 1{
+			vals.Add("key", split[0])
+		}else{
+			vals.Add("key", split[0])
+			vals.Add("value", split[1])
 		}
 	}
-	return ""
+	return vals
 }
