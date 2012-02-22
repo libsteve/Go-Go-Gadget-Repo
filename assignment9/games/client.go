@@ -10,7 +10,7 @@ func main() {
 	ttt = flag.String("ttt", 0, "Play a game of Tick-Tack-Toe as Player 1 or 2")
 
 	var host *string
-	host = flag.String("host", "localhost:8080", "The server host name and port to connect to (defaults to localhost:8080)")
+	host = flag.String("host", "localhost:8080", "The server host name and port to connect to")
 	flag.Parse()
 
 
@@ -37,4 +37,40 @@ func main() {
 
 
 	// play the games
+	var ref games.Referee
+	player := games.NewView()
+	proxy := (&proxy)(games.NewView())
+	proxy.url = *host
+
+	switch player_id {
+	case 1:
+		ref := games.NewReferee(game, player, proxy)
+	case 2:
+		ref := games.NewReferee(game, proxy, player)
+	}
+
+	go player.Loop()
+	go loop(proxy)
+
+	ref.Loop()
+}
+
+type proxy struct {
+	games.View
+	url string
+}
+
+func loop(proxy *proxy) os.Error {
+	for {
+		request <- proxy.Request
+
+		switch request.Command {
+		case games.GET:
+			//send get request
+		case games.SEND:
+			//sned send request
+		default:
+			continue
+		}
+	}
 }
