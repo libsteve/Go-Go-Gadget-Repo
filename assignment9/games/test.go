@@ -17,7 +17,7 @@ func main() {
 		// get the response for the query
 		var query string
 		if query = parse_arg(arg); query == "" { continue }
-		if response, err := client.Get("http://" + *host + query); err != nil {
+		if response, err := client.Get("http://" + *host + query); err == nil {
 
 			//////
 			// read and print the response
