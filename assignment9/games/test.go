@@ -15,7 +15,9 @@ func main() {
 	for _, arg := range args {
 		//////
 		// get the responce for the query
-		if response, err := client.Get(*host + parse_arg(arg)); err != nil {
+		var query string
+		if query = parse_arg(arg); query == "" { continue }
+		if response, err := client.Get(*host + query); err != nil {
 
 			//////
 			// read and print the responce
