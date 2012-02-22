@@ -17,8 +17,8 @@ func main() {
 		// get the response for the query
 		var vals url.Values
 		if vals = parse(arg); vals == nil { continue }
-	//	if response, err := client.Get("http://" + *host + query); err == nil {
-		if response, err := client.PostForm("http://" + *host, vals); err == nil{
+		if response, err := client.PostForm("http://" + *host, vals); err == nil {
+			
 			//////
 			// read and print the response
 			r := bufio.NewReader(response.Body)

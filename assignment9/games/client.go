@@ -1,13 +1,13 @@
 package main
 
 import ( "./games"; "./rps"; "./ttt" )
-import ( "http"; "flag"; "fmt"; "os" )
+import ( "http"; "url"; "bufio"; "flag"; "fmt"; "os" )
 
 func main() {
-	var rps *string
-	var ttt *string
-	rps = flag.String("rps", 0, "Play a game of Rock-Paper-Scissors as Player 1 or 2")
-	ttt = flag.String("ttt", 0, "Play a game of Tick-Tack-Toe as Player 1 or 2")
+	var r *int
+	var t *int
+	r = flag.Int("rps", 0, "Play a game of Rock-Paper-Scissors as Player 1 or 2")
+	t = flag.Int("ttt", 0, "Play a game of Tick-Tack-Toe as Player 1 or 2")
 
 	var host *string
 	host = flag.String("host", "localhost:8080", "The server host name and port to connect to")
@@ -16,59 +16,80 @@ func main() {
 
 	var player_id int
 	var game games.Igame
-	if *rps <= 0 && *ttt <= 0 {
+	if *r <= 0 && *t <= 0 {
 		fmt.Fprintln(os.Stderr, "A game and a player number must be provided")
 		return
-	} else if *rps > 2 || *ttt > 2 {
+	} else if *r > 2 || *t > 2 {
 		fmt.Fprintln(os.Stderr, "There can only be a Player 1 or a Player 2")
 		return
-	} else if (*rps > 0 && *rps < 3) && (*ttt > 0 && *ttt < 3) {
+	} else if (*r > 0 && *r < 3) && (*t > 0 && *t < 3) {
 		fmt.Fprintln(os.Stderr, "Only one game can be played at a time")
 		return
-	} else {
-		if *rps != 0 {
-			player_id = *rps
-			game = rps.NewGame()
-		} else { 
-			player_id = *ttt
-			game = ttt.NewGame()
-		}
+	}
+	if *r != 0 {
+		player_id = *r
+		game = rps.NewGame()
+	} else { 
+		player_id = *t
+		game = ttt.NewGame()
 	}
 
 
 	// play the games
-	var ref games.Referee
+	var ref *games.Referee
 	player := games.NewView()
-	proxy := (&proxy)(games.NewView())
-	proxy.url = *host
+	player_view := &games.ViewView{player, os.Stdin, os.Stdout}
+	var prox *proxy
+	prox_back := games.NewView()
+	prox = &proxy{prox_back, *host, ""}
+	prox.url = *host
 
 	switch player_id {
 	case 1:
-		ref := games.NewReferee(game, player, proxy)
+		prox.id = "q2"
+		ref = games.NewReferee(game, player, prox_back)
 	case 2:
-		ref := games.NewReferee(game, proxy, player)
+		prox.id = "q1"
+		ref = games.NewReferee(game, prox_back, player)
 	}
 
-	go player.Loop()
-	go loop(proxy)
+	go player_view.Loop()
+	go loop(prox)
 
 	ref.Loop()
 }
 
 type proxy struct {
-	games.View
+	*games.View
 	url string
+	id string
 }
 
-func loop(proxy *proxy) os.Error {
+func loop(prox *proxy) {
+	client := http.DefaultClient
 	for {
-		request <- proxy.Request
+		request := <- prox.Request
 
+		vals := make(url.Values)
 		switch request.Command {
-		case games.GET:
-			//send get request
-		case games.SEND:
-			//sned send request
+		case games.Get:
+			vals.Add("key", prox.id)
+			if response, err := client.PostForm("http://" + prox.url, vals); err == nil{
+				//////
+				// read and print the response
+				r := bufio.NewReader(response.Body)
+				ln, _, _ := r.ReadLine()
+				resp := string(ln)
+
+				//////
+				// close the response readcloser
+				response.Body.Close()
+				prox.Response <- []string{ resp }
+			}
+		case games.Set:
+			vals.Add("key", prox.id)
+			vals.Add("value", request.Args[0])
+			client.PostForm("http://" + prox.url, vals)
 		default:
 			continue
 		}
