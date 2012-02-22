@@ -88,4 +88,8 @@ Possible arguments are:
 						$ ./test -host localhost:8080 foo
 						$ ./test -host localhost:8080 foo=bar
 						$ ./server q1 q2
-						$ .client -ttt 1
+						$ ./client -ttt 1
+
+Notes:
+	
+	After closing client, if you would like to run it again the server must be restarted. 
