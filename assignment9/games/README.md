@@ -10,12 +10,16 @@ Includes
 * main.go
 * rps.go
 * ttt.go
-* games.go
+* local.go
 * igame.go
 * view.go
 * referee.go
 * README.md
 * Makefile
+* test.go
+* client.go
+* server.go
+* remot.go
 
 
 About
@@ -47,14 +51,26 @@ To generate documentation:
 
 	$ make doc
 
-To run the program:
+To run the different programs:
 	
-	$ ./games [flags] [<filename>]
+	$ ./local [flags] [<filename>] 
+	$ ./remote [flags] [port number]
+	$ ./server [flags] [port number] channel...
+	$ ./test [flags] [host name] channel
+	$ ./client [flags] channel
 
-Possible flags are:
+Possible flags for client local and remote are:
 	
-	-ttt - tic tac toe
-	-rps - rock paper scissors
+	-ttt : tic tac toe
+	-rps : rock paper scissors
+
+Possible flags for server are:
+	
+	-port [port number] : specifiy a port number (default is :8080)
+
+Possible flags for test are:
+
+	-host [hostname] : specify host name (default is localhost:8080)
 
 Possible arguments are:
 
@@ -65,3 +81,11 @@ Possible arguments are:
 						$ ./games -ttt /dev/ttys002
 					
 					if no file is given, standard in/out is shared between player 1 and 2
+
+	channel  	-  example:
+					
+						$ ./server -port :8080 foo
+						$ ./test -host localhost:8080 foo
+						$ ./test -host localhost:8080 foo=bar
+						$ ./server q1 q2
+						$ .client -ttt 1
