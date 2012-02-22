@@ -73,26 +73,37 @@ func loop(prox *proxy) {
 	for {
 		request := <- prox.Request
 
-		vals := make(url.Values)
 		switch request.Command {
 		case games.Get:
-			vals.Add("key", prox.proxy_id)
-			if response, err := client.PostForm("http://" + prox.url, vals); err == nil{
-				//////
-				// read and print the response
-				r := bufio.NewReader(response.Body)
-				ln, _, _ := r.ReadLine()
-				resp := string(ln)
+			go func(request games.Request) {
+				println("get")
 
-				//////
-				// close the response readcloser
-				response.Body.Close()
-				prox.Response <- []string{ resp }
-			}
+				vals := make(url.Values)
+				vals.Add("key", prox.player_id)
+				if response, err := client.PostForm("http://" + prox.url, vals); err == nil{
+					//////
+					// read and print the response
+					r := bufio.NewReader(response.Body)
+					ln, _, _ := r.ReadLine()
+					resp := string(ln)
+
+					//////
+					// close the response readcloser
+					response.Body.Close()
+					prox.Response <- []string{ resp }
+				}
+				println("get done")
+			}(request)
 		case games.Set:
-			vals.Add("key", prox.player_id)
-			vals.Add("value", request.Args[0])
-			client.PostForm("http://" + prox.url, vals)
+			go func(request games.Request) {
+				println("set")
+
+				vals := make(url.Values)
+				vals.Add("key", prox.proxy_id)
+				vals.Add("value", request.Args[0])
+				client.PostForm("http://" + prox.url, vals)
+				println("set done")
+			}(request)
 		default:
 			continue
 		}
