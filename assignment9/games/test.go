@@ -8,7 +8,7 @@ func main() {
 	flag.Parse()
 
 	args := flag.Args()
-	if len(args) == 0 { fmt.Fprintln(os.Stderr, "Not Enougn Args."); return }
+	if len(args) == 0 { fmt.Fprintln(os.Stderr, "Not Enough Args."); return }
 
 	client := http.DefaultClient
 
