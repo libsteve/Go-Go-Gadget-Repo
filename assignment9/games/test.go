@@ -14,14 +14,14 @@ func main() {
 
 	for _, arg := range args {
 		//////
-		// get the responce for the query
+		// get the response for the query
 		var query string
 		if query = parse_arg(arg); query == "" { continue }
 		if response, err := client.Get(*host + query); err != nil {
 
 			//////
-			// read and print the responce
-			//r := bufio.NewReader(responce.Body.(io.Reader))
+			// read and print the response
+			//r := bufio.NewReader(response.Body.(io.Reader))
 			//ln, _, _ := r.ReadLine()
 			//fmt.Println(string(ln))
 			this := []byte("                                                     ")
@@ -29,7 +29,7 @@ func main() {
 			fmt.Println(string(this))
 
 			//////
-			// close the responce readcloser
+			// close the response readcloser
 			response.Body.Close()
 
 		}
