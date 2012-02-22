@@ -9,6 +9,7 @@ assignment5/make/make
 assignment5/make/dag
 assignment4/dag/dag
 assignment2/prepro/pp
+assignment1/expr/expr
 assignment3/ls/ls
 assignment3/ls/main
 assignment6/map_reduce/matrixClient
@@ -21,3 +22,4 @@ assignment8/games/games
 assignment9/games/local
 assignment9/games/remote
 assignment9/games/server
+assignment9/games/test
