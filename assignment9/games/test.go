@@ -1,6 +1,6 @@
 package main
 
-import ( "http"; "flag"; "fmt"; "os";  "strings" )
+import ( "http"; "flag"; "fmt"; "os"; "bufio"; "strings" )
 
 func main() {
 	var host *string
@@ -21,12 +21,9 @@ func main() {
 
 			//////
 			// read and print the response
-			//r := bufio.NewReader(response.Body.(io.Reader))
-			//ln, _, _ := r.ReadLine()
-			//fmt.Println(string(ln))
-			this := []byte("                                                     ")
-			response.Body.Read(this)
-			fmt.Println(string(this))
+			r := bufio.NewReader(response.Body)
+			ln, _, _ := r.ReadLine()
+			fmt.Println(string(ln))
 
 			//////
 			// close the response readcloser
