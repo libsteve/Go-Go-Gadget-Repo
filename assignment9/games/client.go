@@ -41,15 +41,17 @@ func main() {
 	player_view := &games.ViewView{player, os.Stdin, os.Stdout}
 	var prox *proxy
 	prox_back := games.NewView()
-	prox = &proxy{prox_back, *host, ""}
+	prox = &proxy{prox_back, *host, "", ""}
 	prox.url = *host
 
 	switch player_id {
 	case 1:
-		prox.id = "q2"
+		prox.player_id = "q1"
+		prox.proxy_id = "q2"
 		ref = games.NewReferee(game, player, prox_back)
 	case 2:
-		prox.id = "q1"
+		prox.player_id = "q2"
+		prox.proxy_id = "q1"
 		ref = games.NewReferee(game, prox_back, player)
 	}
 
@@ -62,7 +64,8 @@ func main() {
 type proxy struct {
 	*games.View
 	url string
-	id string
+	proxy_id string
+	player_id string
 }
 
 func loop(prox *proxy) {
@@ -73,7 +76,7 @@ func loop(prox *proxy) {
 		vals := make(url.Values)
 		switch request.Command {
 		case games.Get:
-			vals.Add("key", prox.id)
+			vals.Add("key", prox.proxy_id)
 			if response, err := client.PostForm("http://" + prox.url, vals); err == nil{
 				//////
 				// read and print the response
@@ -87,7 +90,7 @@ func loop(prox *proxy) {
 				prox.Response <- []string{ resp }
 			}
 		case games.Set:
-			vals.Add("key", prox.id)
+			vals.Add("key", prox.player_id)
 			vals.Add("value", request.Args[0])
 			client.PostForm("http://" + prox.url, vals)
 		default:
