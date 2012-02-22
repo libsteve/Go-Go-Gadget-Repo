@@ -23,8 +23,8 @@ func main() {
 
 	//////
 	// create the appropriate channels for the server
-	for _, named_channel := range args {
-		server.channels[named_channel] = make(chan string), true
+	for id, _ := range args {
+		server.channels[args[id]] = make(chan string), true
 	}
 
 	//////

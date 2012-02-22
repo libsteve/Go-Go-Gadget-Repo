@@ -76,8 +76,6 @@ func loop(prox *proxy) {
 		switch request.Command {
 		case games.Get:
 			go func(request games.Request) {
-				println("get")
-
 				vals := make(url.Values)
 				vals.Add("key", prox.player_id)
 				if response, err := client.PostForm("http://" + prox.url, vals); err == nil{
@@ -92,17 +90,13 @@ func loop(prox *proxy) {
 					response.Body.Close()
 					prox.Response <- []string{ resp }
 				}
-				println("get done")
 			}(request)
 		case games.Set:
 			go func(request games.Request) {
-				println("set")
-
 				vals := make(url.Values)
 				vals.Add("key", prox.proxy_id)
 				vals.Add("value", request.Args[0])
 				client.PostForm("http://" + prox.url, vals)
-				println("set done")
 			}(request)
 		default:
 			continue
